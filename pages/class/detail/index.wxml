@@ -1,0 +1,22 @@
+<t-navbar title="{{classInfo.name || '班级详情'}}" left-arrow />
+<view class="page class-detail page-with-navbar">
+  <view class="class-detail__header">
+    <view class="class-info">
+      <view class="class-name">{{classInfo.name || '加载中...'}}</view>
+      <view class="class-desc" wx:if="{{classInfo.description}}">{{classInfo.description}}</view>
+      <view class="class-meta">
+        <text class="meta-item">学期：{{classInfo.semester || '-'}}</text>
+        <text class="meta-item">成员：{{classInfo.memberCount || 0}}人</text>
+      </view>
+    </view>
+  </view>
+  
+  <view class="class-detail__content">
+    <t-cell-group theme="card">
+      <t-cell title="通知公告" arrow bindclick="goToNotices" />
+      <t-cell title="作业管理" arrow bindclick="goToAssignments" />
+      <t-cell title="考勤签到" arrow bindclick="goToAttendance" />
+      <t-cell title="请假审批" arrow bindclick="goToLeave" />
+    </t-cell-group>
+  </view>
+</view>

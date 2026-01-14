@@ -1,0 +1,50 @@
+<t-navbar left-arrow />
+<view class="page login page-with-navbar">
+  <view class="login__title"> 欢迎登录 </view>
+  <view class="login__content">
+    <view class="login__input">
+      <view class="login__password">
+        <t-input
+          label="账号"
+          placeholder="请输入手机号"
+          value="{{passwordInfo.account}}"
+          bindchange="onAccountChange"
+        ></t-input>
+        <t-input
+          label="密码"
+          placeholder="请输入密码"
+          type="password"
+          clearable
+          value="{{passwordInfo.password}}"
+          bindchange="onPasswordChange"
+        />
+      </view>
+    </view>
+
+    <t-radio-group allow-uncheck borderless value="{{radioValue}}" bind:change="onCheckChange">
+      <t-radio
+        label="同意《协议条款》"
+        value="agree"
+        t-class="radio-class"
+        t-class-icon="radio-class-icon"
+        t-class-label="radio-class-label"
+      />
+    </t-radio-group>
+
+    <view class="login__button">
+      <t-button theme="primary" size="large" block disabled="{{!isSubmit}}" bindtap="login">
+        登录
+      </t-button>
+    </view>
+
+    <view class="login__footer">
+      <view class="login__forget">
+        <t-link theme="primary" size="small" bindtap="goToForgotPassword">忘记密码？</t-link>
+    </view>
+      <view class="login__register">
+        <text class="register-text">还没有账号？</text>
+        <t-link theme="primary" size="small" bindtap="goToRegister">立即注册</t-link>
+  </view>
+    </view>
+  </view>
+</view>

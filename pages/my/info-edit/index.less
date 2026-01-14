@@ -1,0 +1,68 @@
+.info-edit__navbar {
+  position: relative;
+  z-index: 9999;
+  background-color: #fff;
+}
+
+.info-edit {
+  --td-input-vertical-padding: 0;
+  padding-top: 220rpx; // 为自定义导航栏留出空间，避免内容被遮挡
+  padding-bottom: 120rpx; // 为底部保存按钮留出空间
+
+  &__avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40rpx 0;
+    margin-bottom: 24rpx;
+    position: relative;
+
+    .avatar-upload {
+      margin-top: 24rpx;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8rpx;
+      padding: 12rpx 24rpx;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 40rpx;
+      color: #fff;
+
+      &__text {
+        font-size: 24rpx;
+        color: #fff;
+      }
+    }
+  }
+}
+
+.info-edit__cell {
+  .t-cell__title {
+    flex: none;
+    width: 162rpx;
+  }
+}
+
+.info-edit__gender {
+  --td-radio-vertical-padding: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-edit__introduction {
+  width: 100%;
+  padding: 0 !important;
+  height: 200rpx;
+}
+
+.info-edit__photos {
+  width: 100%;
+}
+
+.info-edit__save {
+  position: fixed;
+  left: 32rpx;
+  right: 32rpx;
+  bottom: calc(env(safe-area-inset-bottom) + 32rpx);
+}

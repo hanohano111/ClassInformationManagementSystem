@@ -1,0 +1,53 @@
+<t-toast id="t-toast" />
+
+<view class="my">
+  <view class="hero">
+    <view class="hero__top">
+      <view class="hero__title">我的</view>
+    </view>
+    <view class="hero__card">
+      <view class="hero__card-left">
+        <t-avatar
+          size="112rpx"
+          image="{{isLoad && personalInfo.image ? personalInfo.image : ''}}"
+          icon="{{isLoad ? '' : 'user'}}"
+        />
+        <view class="hero__card-info">
+          <view class="hero__name">
+            {{ isLoad ? personalInfo.name : '未登录' }}
+          </view>
+        </view>
+      </view>
+      <view class="hero__card-right">
+        <t-button
+          size="small"
+          theme="primary"
+          variant="outline"
+          bindtap="{{isLoad ? 'onNavigateTo' : 'onLogin'}}"
+        >
+          {{ isLoad ? '编辑资料' : '立即登录' }}
+        </t-button>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-card__header">
+      <view class="section-card__title">设置</view>
+  </view>
+  <t-cell-group theme="card">
+    <t-cell
+      wx:for="{{settingList}}"
+      wx:for-item="item"
+      wx:key="type"
+      title="{{item.name}}"
+      url="{{item.url || ''}}"
+      leftIcon="{{item.icon}}"
+      hover
+      arrow
+      data-data="{{item}}"
+      bindclick="onEleClick"
+    />
+  </t-cell-group>
+  </view>
+</view>

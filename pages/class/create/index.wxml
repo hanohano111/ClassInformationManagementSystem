@@ -1,0 +1,34 @@
+<t-navbar title="创建班级" left-arrow />
+<view class="page create-class page-with-navbar">
+  <view class="create-class__content">
+    <view class="form-item">
+      <t-input
+        label="班级名称"
+        placeholder="请输入班级名称"
+        value="{{formData.name}}"
+        bindchange="onNameChange"
+      />
+    </view>
+    <view class="form-item">
+      <t-input
+        label="班级描述"
+        placeholder="请输入班级描述（选填）"
+        value="{{formData.description}}"
+        bindchange="onDescriptionChange"
+      />
+    </view>
+    <view class="form-item">
+      <t-input
+        label="学期"
+        placeholder="请输入学期，如：2024春季"
+        value="{{formData.semester}}"
+        bindchange="onSemesterChange"
+      />
+    </view>
+    <view class="create-class__button">
+      <t-button theme="primary" size="large" block disabled="{{!canSubmit}}" bindtap="createClass">
+        创建班级
+      </t-button>
+    </view>
+  </view>
+</view>
