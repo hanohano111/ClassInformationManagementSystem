@@ -1,0 +1,14 @@
+<t-navbar title="课程成员" left-arrow />
+<view class="page class-members page-with-navbar">
+  <view class="class-members__content">
+    <t-cell-group theme="card">
+      <t-cell title="课程成员" note="{{memberList.length}}人" />
+      <block wx:for="{{memberList}}" wx:for-item="item" wx:key="userId">
+        <t-cell
+          title="{{item.name || '未设置名称'}}"
+          note="{{item.studentNo || '未填写学号'}}"
+        />
+      </block>
+    </t-cell-group>
+  </view>
+</view>

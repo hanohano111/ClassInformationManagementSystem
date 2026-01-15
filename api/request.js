@@ -134,8 +134,12 @@ async function request(url, method = 'GET', data = {}) {
           try {
           // HTTP状态码为200才视为成功
             // 兼容 Mock 模式：如果没有 statusCode，检查 data.code 或 data.success
+            // 如果 data.code 不是 200 或 data.success 不是 true，视为失败
+            const dataCode = res.data?.code;
+            const dataSuccess = res.data?.success;
+            // 检查响应是否成功：statusCode为200且data.code为200或data.success为true
             const isSuccess = res.statusCode === 200 
-              || (res.statusCode === undefined && (res.data?.code === 200 || res.data?.success === true));
+              && (dataCode === 200 || dataSuccess === true || (dataCode === undefined && dataSuccess === undefined && res.data));
             
             if (isSuccess) {
               // 解密响应数据
@@ -146,7 +150,15 @@ async function request(url, method = 'GET', data = {}) {
               });
           } else {
             // wx.request的特性，只要有响应就会走success回调，所以在这里判断状态，非200的均视为请求失败
-            reject(res);
+            // 构造错误对象，包含错误信息
+            const error = {
+              ...res,
+              data: res.data,
+              message: res.data?.message || '请求失败',
+              statusCode: res.statusCode || dataCode || 500,
+            };
+            console.error('[请求失败]', error);
+            reject(error);
             }
           } catch (error) {
             console.error('响应处理失败:', error);

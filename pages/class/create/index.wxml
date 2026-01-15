@@ -1,20 +1,20 @@
-<t-navbar title="创建班级" left-arrow />
+<t-navbar title="创建课程" left-arrow />
 <view class="page create-class page-with-navbar">
   <view class="create-class__content">
     <view class="form-item">
       <t-input
-        label="班级名称"
-        placeholder="请输入班级名称"
+        label="课程名称"
+        placeholder="请输入课程名称"
         value="{{formData.name}}"
         bindchange="onNameChange"
       />
     </view>
     <view class="form-item">
       <t-input
-        label="班级描述"
-        placeholder="请输入班级描述（选填）"
-        value="{{formData.description}}"
-        bindchange="onDescriptionChange"
+        label="老师名称"
+        placeholder="请输入老师名称"
+        value="{{formData.teacherName}}"
+        bindchange="onTeacherNameChange"
       />
     </view>
     <view class="form-item">
@@ -27,7 +27,7 @@
     </view>
     <view class="create-class__button">
       <t-button theme="primary" size="large" block disabled="{{!canSubmit}}" bindtap="createClass">
-        创建班级
+        创建课程
       </t-button>
     </view>
   </view>

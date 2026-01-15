@@ -22,7 +22,21 @@ const getLocalUrl = (path, name) => {
   return tempFileName;
 };
 
+/**
+ * 生成6位随机班级码（数字+大写英文）
+ * @returns {string} 6位班级码
+ */
+const generateClassCode = () => {
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+};
+
 module.exports = {
   formatTime,
   getLocalUrl,
+  generateClassCode,
 };

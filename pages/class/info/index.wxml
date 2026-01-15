@@ -1,0 +1,65 @@
+<t-navbar title="课程信息" left-arrow />
+<view class="page class-info page-with-navbar">
+  <view class="class-info__content">
+    <!-- 查看模式 -->
+    <view wx:if="{{!isEditing}}">
+      <t-cell-group theme="card">
+        <t-cell title="课程名称" note="{{classInfo.name || '-'}}" />
+        <t-cell title="学期" note="{{classInfo.semester || '-'}}" />
+        <t-cell title="老师" note="{{classInfo.teacherName || '-'}}" />
+        <t-cell title="课程码" note="{{classInfo.classCode || '-'}}" />
+      </t-cell-group>
+
+      <view class="class-info__actions" wx:if="{{isAdmin}}">
+        <t-button theme="primary" block bindtap="startEdit" style="margin-top: 32rpx;">
+          编辑信息
+        </t-button>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="class-info__operation-buttons">
+        <t-button theme="primary" block bindtap="hideClass" style="margin-bottom: 16rpx;">
+          隐藏课程
+        </t-button>
+        <t-button theme="danger" block bindtap="exitClass">
+          退出课程
+        </t-button>
+      </view>
+    </view>
+
+    <!-- 编辑模式 -->
+    <view wx:else>
+      <view class="form-item">
+        <t-input
+          label="课程名称"
+          placeholder="请输入课程名称"
+          value="{{editForm.name}}"
+            bindchange="onNameInput"
+        />
+      </view>
+      <view class="form-item">
+        <t-input
+          label="学期"
+          placeholder="请输入学期，如：2024春季"
+          value="{{editForm.semester}}"
+            bindchange="onSemesterInput"
+        />
+      </view>
+      <view class="form-item">
+        <t-input
+          label="老师名称"
+          placeholder="请输入老师名称"
+          value="{{editForm.teacherName}}"
+            bindchange="onTeacherNameInput"
+        />
+      </view>
+
+      <view class="class-info__actions">
+        <t-button theme="default" block bindtap="cancelEdit" style="margin-bottom: 16rpx;">
+          取消
+        </t-button>
+        <t-button theme="primary" block bindtap="saveEdit">保存</t-button>
+      </view>
+    </view>
+  </view>
+</view>

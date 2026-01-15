@@ -1,0 +1,54 @@
+<t-navbar title="管理员设置" left-arrow />
+<view class="page admin-settings page-with-navbar">
+  <!-- 功能开关 -->
+  <view class="admin-settings__section">
+    <view class="section-title">功能开关</view>
+    <t-cell-group theme="card">
+      <t-cell title="通知功能" label="控制课程通知功能的开启/关闭">
+        <t-switch slot="right-icon" value="{{settings.noticeEnabled}}" bindchange="toggleNotice" />
+      </t-cell>
+      <t-cell title="作业功能" label="控制课程作业功能的开启/关闭">
+        <t-switch slot="right-icon" value="{{settings.assignmentEnabled}}" bindchange="toggleAssignment" />
+      </t-cell>
+      <t-cell title="请假申请功能" label="控制课程请假申请功能的开启/关闭">
+        <t-switch slot="right-icon" value="{{settings.leaveEnabled}}" bindchange="toggleLeave" />
+      </t-cell>
+    </t-cell-group>
+  </view>
+
+  <!-- 管理员管理 -->
+  <view class="admin-settings__section">
+    <view class="section-title">管理员管理</view>
+    
+    <!-- 添加管理员 -->
+    <view class="add-admin">
+      <t-input
+        placeholder="请输入用户ID或手机号"
+        value="{{newAdminInput}}"
+        bindinput="onNewAdminInput"
+      />
+      <t-button theme="primary" size="small" bindtap="addAdmin" style="margin-top: 16rpx;">
+        添加管理员
+      </t-button>
+    </view>
+
+    <!-- 管理员列表 -->
+    <view class="admin-list">
+      <view class="admin-item" wx:for="{{admins}}" wx:key="id">
+        <view class="admin-info">
+          <view class="admin-name">{{item.name || item.phone || item.userId}}</view>
+          <view class="admin-role" wx:if="{{item.isCreator}}">创建者</view>
+        </view>
+        <t-button 
+          wx:if="{{!item.isCreator}}"
+          size="small" 
+          theme="danger" 
+          bindtap="removeAdmin"
+          data-id="{{item.id}}"
+        >
+          移除
+        </t-button>
+      </view>
+    </view>
+  </view>
+</view>

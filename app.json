@@ -57,7 +57,16 @@
     {
       "root": "pages/class",
       "name": "class",
-      "pages": ["create/index", "settings/index", "detail/index"]
+      "pages": [
+        "create/index",
+        "settings/index",
+        "detail/index",
+        "course/index",
+        "attendance/index",
+        "info/index",
+        "admin/index",
+        "members/index"
+      ]
     }
   ],
   "window": {
@@ -75,7 +84,7 @@
       },
       {
         "pagePath": "pages/message/index",
-        "text": "班级"
+        "text": "课程"
       },
       {
         "pagePath": "pages/my/index",

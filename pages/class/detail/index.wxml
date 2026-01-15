@@ -1,22 +1,45 @@
-<t-navbar title="{{classInfo.name || '班级详情'}}" left-arrow />
+<t-navbar title="{{classInfo.name || '课程详情'}}" left-arrow />
 <view class="page class-detail page-with-navbar">
-  <view class="class-detail__header">
-    <view class="class-info">
-      <view class="class-name">{{classInfo.name || '加载中...'}}</view>
-      <view class="class-desc" wx:if="{{classInfo.description}}">{{classInfo.description}}</view>
-      <view class="class-meta">
-        <text class="meta-item">学期：{{classInfo.semester || '-'}}</text>
-        <text class="meta-item">成员：{{classInfo.memberCount || 0}}人</text>
-      </view>
-    </view>
-  </view>
-  
+  <!-- 功能列表 -->
   <view class="class-detail__content">
     <t-cell-group theme="card">
-      <t-cell title="通知公告" arrow bindclick="goToNotices" />
-      <t-cell title="作业管理" arrow bindclick="goToAssignments" />
-      <t-cell title="考勤签到" arrow bindclick="goToAttendance" />
-      <t-cell title="请假审批" arrow bindclick="goToLeave" />
+      <t-cell title="课程信息" arrow bindclick="goToClassInfo">
+        <t-icon slot="icon" name="info-circle" size="40rpx" color="#0052d9" />
+      </t-cell>
+      <t-cell title="课程成员" arrow bindclick="goToClassMembers">
+        <t-icon slot="icon" name="user" size="40rpx" color="#0052d9" />
+      </t-cell>
+      <t-cell title="签到" arrow bindclick="goToAttendance">
+        <t-icon slot="icon" name="check-circle" size="40rpx" color="#0052d9" />
+      </t-cell>
+      <t-cell title="通知" arrow bindclick="goToNotices">
+        <t-icon slot="icon" name="notification" size="40rpx" color="#0052d9" />
+      </t-cell>
+      <t-cell title="作业" arrow bindclick="goToAssignments">
+        <t-icon slot="icon" name="file-text" size="40rpx" color="#0052d9" />
+      </t-cell>
+      <t-cell title="请假申请" arrow bindclick="goToLeave">
+        <t-icon slot="icon" name="edit" size="40rpx" color="#0052d9" />
+      </t-cell>
     </t-cell-group>
+
+    <!-- 课程信息展开内容 -->
+    <view class="class-info-expand" wx:if="{{showClassInfo}}">
+      <t-cell-group theme="card">
+        <t-cell title="学期" label="{{classInfo.semester || '-'}}" />
+        <t-cell title="老师" label="{{classInfo.teacherName || '-'}}" />
+        <t-cell title="课程码" label="{{classInfo.classCode || '-'}}" />
+      </t-cell-group>
+      
+      <!-- 操作按钮 -->
+      <view class="class-info-buttons">
+        <t-button theme="primary" block bindtap="hideClass" style="margin-bottom: 16rpx;">
+          隐藏课程
+        </t-button>
+        <t-button theme="danger" block bindtap="exitClass">
+          退出课程
+        </t-button>
+      </view>
+    </view>
   </view>
 </view>

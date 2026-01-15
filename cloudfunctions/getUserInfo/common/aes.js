@@ -66,9 +66,23 @@ function encryptFieldsForDB(payload, fields) {
   return data;
 }
 
+function decryptFieldsFromDB(payload, fields) {
+  const data = { ...payload };
+  fields.forEach((field) => {
+    const ivKey = `${field}_iv`;
+    if (data[field] && data[ivKey]) {
+      data[field] = decrypt(data[field], data[ivKey]);
+      // 删除 iv 字段，不需要返回给前端
+      delete data[ivKey];
+    }
+  });
+  return data;
+}
+
 module.exports = {
   encrypt,
   decrypt,
   decryptFields,
   encryptFieldsForDB,
+  decryptFieldsFromDB,
 };

@@ -1,20 +1,32 @@
-<nav nav-type="title" title-text="班级" sidebar="{{classSidebar}}" drawer-title="班级" bind:sidebar-click="onSidebarClick"></nav>
+<wxs module="utils">
+  function isVisible(item, hiddenClassIds) {
+    return hiddenClassIds.indexOf(item.id) === -1;
+  }
+  module.exports.isVisible = isVisible;
+</wxs>
+
+<nav nav-type="title" title-text="课程" sidebar="{{classSidebar}}" drawer-title="课程" bind:sidebar-click="onSidebarClick"></nav>
 <view class="class-container">
   <view class="class-list">
     <view 
       class="class-card" 
       wx:for="{{classList}}" 
       wx:key="id"
+      wx:if="{{utils.isVisible(item, hiddenClassIds)}}"
       bindtap="enterClass"
       data-id="{{item.id}}"
     >
       <view class="class-card__content">
         <view class="class-card__title">{{item.name}}</view>
+        <view class="class-card__meta" wx:if="{{item.semester || item.teacherName}}">
+          <text wx:if="{{item.semester}}" class="meta-text">{{item.semester}}</text>
+          <text wx:if="{{item.teacherName}}" class="meta-text">{{item.teacherName}}</text>
+        </view>
       </view>
       <t-icon name="chevron-right" size="32rpx" color="#999" />
     </view>
-    <view class="class-empty" wx:if="{{classList.length === 0}}">
-      <t-empty description="暂无班级" />
+    <view class="class-empty" wx:if="{{!hasVisibleClasses}}">
+      <t-empty description="暂无课程" />
     </view>
   </view>
 </view>

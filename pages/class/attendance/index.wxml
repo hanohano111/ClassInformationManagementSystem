@@ -1,0 +1,44 @@
+<t-navbar title="签到" left-arrow />
+<view class="page attendance page-with-navbar">
+  <view class="attendance__content">
+    <!-- 管理员：生成签到码 -->
+    <view class="attendance__section" wx:if="{{isAdmin}}">
+    <view class="section-title">生成签到码</view>
+    <view class="checkin-code-display" wx:if="{{currentCheckInCode}}">
+      <view class="code-label">当前签到码</view>
+      <view class="code-value">{{currentCheckInCode}}</view>
+      <view class="code-expire" wx:if="{{checkInCodeExpireTime}}">
+        剩余时间：{{remainTimeText}}
+      </view>
+    </view>
+    <t-button theme="primary" block bindtap="generateCheckInCode">
+      {{currentCheckInCode ? '重新生成签到码' : '生成签到码'}}
+    </t-button>
+  </view>
+
+  <!-- 签到码签到 -->
+  <view class="attendance__section">
+    <view class="section-title">签到码签到</view>
+    <t-input
+      placeholder="请输入6位签到码"
+      value="{{checkInCodeInput}}"
+      maxlength="6"
+      bindinput="onCheckInCodeInput"
+    />
+    <t-button theme="primary" block bindtap="checkInByCode" style="margin-top: 24rpx;">
+      确认签到
+    </t-button>
+  </view>
+
+  <!-- 定位签到 -->
+  <view class="attendance__section">
+    <view class="section-title">定位签到</view>
+    <view class="location-tip">
+      点击下方按钮进行定位签到，系统将获取您的精确位置信息
+    </view>
+      <t-button theme="primary" block bindtap="checkInByLocation" style="margin-top: 24rpx;">
+        开始定位签到
+      </t-button>
+    </view>
+  </view>
+</view>

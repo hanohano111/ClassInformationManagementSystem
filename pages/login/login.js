@@ -1,23 +1,7 @@
-import { encryptFields } from '~/utils/crypto';
-
 Page({
   data: {
     isCheck: false,
-    isSubmit: false,
-    passwordInfo: {
-      account: '',
-      password: '',
-    },
     radioValue: '',
-  },
-
-  changeSubmit() {
-    const { account, password } = this.data.passwordInfo;
-    if (account !== '' && password !== '' && this.data.isCheck) {
-      this.setData({ isSubmit: true });
-    } else {
-      this.setData({ isSubmit: false });
-    }
   },
 
   onCheckChange(e) {
@@ -25,29 +9,6 @@ Page({
     this.setData({
       radioValue: value,
       isCheck: value === 'agree',
-    });
-    this.changeSubmit();
-  },
-
-  onAccountChange(e) {
-    this.setData({ passwordInfo: { ...this.data.passwordInfo, account: e.detail.value } });
-    this.changeSubmit();
-  },
-
-  onPasswordChange(e) {
-    this.setData({ passwordInfo: { ...this.data.passwordInfo, password: e.detail.value } });
-    this.changeSubmit();
-  },
-
-  goToRegister() {
-    wx.navigateTo({
-      url: '/pages/register/register',
-    });
-  },
-
-  goToForgotPassword() {
-    wx.navigateTo({
-      url: '/pages/forgot-password/forgot-password',
     });
   },
 
@@ -60,38 +21,23 @@ Page({
       return;
     }
 
-    const { account, password } = this.data.passwordInfo;
-    if (!account || !password) {
-      wx.showToast({
-        title: '请输入账号和密码',
-        icon: 'none',
-      });
-      return;
-    }
-
     try {
       wx.showLoading({
         title: '登录中...',
         mask: true,
       });
 
-      // 1. 前端先 AES 加密（沿用你现有的加密工具）
-      const encrypted = await encryptFields(
-        { phone: account, password },
-        ['phone', 'password'],
-      );
-
-      // 2. 调用云函数 login
+      // 直接调用云函数 login（不需要传账号密码，云函数会自动用 openid）
       const res = await wx.cloud.callFunction({
         name: 'login',
-        data: encrypted,
+        data: {}, // 不需要传任何参数，云函数会自动获取 openid
       });
       const result = res.result || {};
 
       if (result.code === 200) {
         const { userId, role } = result.data || {};
 
-        // 这里你之前是存 token，这里可以简单存一下 userId/role
+        // 保存用户信息到本地
         if (userId) {
           wx.setStorageSync('userId', userId);
         }

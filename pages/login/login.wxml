@@ -1,50 +1,48 @@
-<t-navbar left-arrow />
+<t-navbar left-arrow title="登录" />
 <view class="page login page-with-navbar">
-  <view class="login__title"> 欢迎登录 </view>
   <view class="login__content">
-    <view class="login__input">
-      <view class="login__password">
-        <t-input
-          label="账号"
-          placeholder="请输入手机号"
-          value="{{passwordInfo.account}}"
-          bindchange="onAccountChange"
-        ></t-input>
-        <t-input
-          label="密码"
-          placeholder="请输入密码"
-          type="password"
-          clearable
-          value="{{passwordInfo.password}}"
-          bindchange="onPasswordChange"
+    <view class="login__header">
+      <image class="login__logo" src="/static/icon_wx.png" mode="aspectFit" />
+      <view class="login__title">欢迎使用课堂助手</view>
+      <view class="login__subtitle">使用微信一键登录，随时管理你的课程</view>
+    </view>
+
+    <view class="login__card">
+      <view class="login__desc">
+        <text>我们仅会获取必要的基础信息（头像、昵称），用于展示个人资料。</text>
+      </view>
+
+      <t-radio-group
+        class="login__agreement"
+        allow-uncheck
+        borderless
+        value="{{radioValue}}"
+        bind:change="onCheckChange"
+      >
+        <t-radio
+          label="我已阅读并同意《用户协议》和《隐私政策》"
+          value="agree"
+          t-class="radio-class"
+          t-class-icon="radio-class-icon"
+          t-class-label="radio-class-label"
         />
+      </t-radio-group>
+
+      <view class="login__button">
+        <t-button
+          theme="primary"
+          size="large"
+          block
+          disabled="{{!isCheck}}"
+          bindtap="login"
+        >
+          微信一键登录
+        </t-button>
       </view>
     </view>
 
-    <t-radio-group allow-uncheck borderless value="{{radioValue}}" bind:change="onCheckChange">
-      <t-radio
-        label="同意《协议条款》"
-        value="agree"
-        t-class="radio-class"
-        t-class-icon="radio-class-icon"
-        t-class-label="radio-class-label"
-      />
-    </t-radio-group>
-
-    <view class="login__button">
-      <t-button theme="primary" size="large" block disabled="{{!isSubmit}}" bindtap="login">
-        登录
-      </t-button>
-    </view>
-
-    <view class="login__footer">
-      <view class="login__forget">
-        <t-link theme="primary" size="small" bindtap="goToForgotPassword">忘记密码？</t-link>
-    </view>
-      <view class="login__register">
-        <text class="register-text">还没有账号？</text>
-        <t-link theme="primary" size="small" bindtap="goToRegister">立即注册</t-link>
-  </view>
+    <view class="login__footer-text">
+      <text>如需更换账号，请在微信中切换当前登录的微信号后重新进入小程序。</text>
     </view>
   </view>
 </view>

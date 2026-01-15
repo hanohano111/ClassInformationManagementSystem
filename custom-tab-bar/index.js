@@ -13,7 +13,7 @@ Component({
       {
         icon: 'chat',
         value: 'notice',
-        label: '班级',
+        label: '课程',
       },
       {
         icon: 'user',
