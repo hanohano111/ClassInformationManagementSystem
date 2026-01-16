@@ -54,21 +54,21 @@ exports.main = async (event) => {
       return { code: 400, success: false, message: '您已经签到过了' };
     }
 
-      // 创建签到记录（包含定位信息）
-      await checkInRecords.add({
-        data: {
-          courseId: courseId,
-          userId: userId,
-          openid: openid,
-          checkInCode: code,
-          checkInType: 'code',
-          latitude: latitude || null,
-          longitude: longitude || null,
-          accuracy: accuracy || 0,
-          checkInTime: Date.now(),
-          createdAt: Date.now(),
-        },
-      });
+    // 创建签到记录（包含定位信息）
+    await checkInRecords.add({
+      data: {
+        courseId: courseId,
+        userId: userId,
+        openid: openid,
+        checkInCode: code,
+        checkInType: 'code',
+        latitude: latitude || null,
+        longitude: longitude || null,
+        accuracy: accuracy || 0,
+        checkInTime: Date.now(),
+        createdAt: Date.now(),
+      },
+    });
 
     return {
       code: 200,

@@ -1,0 +1,62 @@
+<t-navbar title="签到详情" left-arrow />
+<view class="page attendance-record-detail page-with-navbar">
+  <view class="attendance-record-detail__content">
+    <view class="record-info" wx:if="{{record}}">
+      <view class="info-header">
+        <view class="info-code">签到码：{{record.code}}</view>
+        <view class="info-time">{{record.createdAtText}}</view>
+      </view>
+      <view class="info-note" wx:if="{{record.note}}">
+        <text class="note-label">提示：</text>
+        <text class="note-text">{{record.note}}</text>
+      </view>
+      <view class="info-stats">
+        <text>已签到：{{record.checkedInCount}}/{{record.totalMembers}}</text>
+      </view>
+    </view>
+
+    <view class="members-list" wx:if="{{record && record.memberStatusList}}">
+      <view class="list-title">成员签到状态</view>
+      <block wx:for="{{record.memberStatusList}}" wx:for-item="member" wx:key="userId">
+        <view class="member-item-wrapper">
+          <view
+            class="member-item"
+            style="transform: translateX({{member.translateX || 0}}rpx);"
+            bindtouchstart="onTouchStart"
+            bindtouchmove="onTouchMove"
+            bindtouchend="onTouchEnd"
+            data-index="{{index}}"
+          >
+            <view class="member-info">
+              <text class="member-name">{{member.name}}</text>
+              <text class="member-student-no" wx:if="{{member.studentNo}}">{{member.studentNo}}</text>
+            </view>
+            <view class="member-status">
+              <text class="status-text status-checked" wx:if="{{member.hasCheckedIn}}">已签到</text>
+              <text class="status-text status-unchecked" wx:else>未签到</text>
+              <view class="member-checkin-time" wx:if="{{member.hasCheckedIn && member.checkInTimeText}}">
+                <text class="time-text">{{member.checkInTimeText}}</text>
+              </view>
+              <view class="member-location" wx:if="{{member.hasCheckedIn && member.latitudeText && member.longitudeText}}">
+                <text class="location-text">定位：{{member.latitudeText}}, {{member.longitudeText}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="member-item__actions" wx:if="{{isAdmin}}">
+            <view
+              class="action-btn action-btn--toggle"
+              catchtap="onToggleStatus"
+              data-index="{{index}}"
+            >
+              <text class="action-text">{{member.hasCheckedIn ? '未签到' : '已签到'}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="empty-record" wx:else>
+      <text>加载中...</text>
+    </view>
+  </view>
+</view>

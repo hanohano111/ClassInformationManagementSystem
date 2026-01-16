@@ -76,7 +76,8 @@
         "leave/index",
         "leave-detail/index",
         "leave-create/index",
-        "attendance-records/index"
+        "attendance-records/index",
+        "attendance-record-detail/index"
       ]
     }
   ],

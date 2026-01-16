@@ -1,0 +1,180 @@
+.attendance-record-detail {
+  &__content {
+    padding: 32rpx;
+  }
+
+  .record-info {
+    background: #f5f7fa;
+    border-radius: 16rpx;
+    padding: 24rpx;
+    margin-bottom: 32rpx;
+
+    .info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16rpx;
+
+      .info-code {
+        font-size: 32rpx;
+        font-weight: 600;
+        color: #000000e6;
+      }
+
+      .info-time {
+        font-size: 24rpx;
+        color: #999;
+      }
+    }
+
+    .info-note {
+      background: #e6f7ff;
+      border-left: 4rpx solid #0052d9;
+      padding: 16rpx;
+      margin-bottom: 16rpx;
+      border-radius: 8rpx;
+
+      .note-label {
+        font-size: 24rpx;
+        color: #0052d9;
+        font-weight: 600;
+      }
+
+      .note-text {
+        font-size: 26rpx;
+        color: #333;
+        line-height: 1.6;
+      }
+    }
+
+    .info-stats {
+      font-size: 26rpx;
+      color: #666;
+      font-weight: 500;
+    }
+  }
+
+  .members-list {
+    .list-title {
+      font-size: 28rpx;
+      font-weight: 600;
+      color: #000000e6;
+      margin-bottom: 24rpx;
+    }
+
+    .member-item-wrapper {
+      position: relative;
+      margin-bottom: 16rpx;
+      overflow: hidden;
+    }
+
+    .member-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 24rpx;
+      background: #fff;
+      border-radius: 16rpx;
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+      position: relative;
+      z-index: 2;
+      transition: transform 0.3s ease;
+
+      .member-info {
+        flex: 1;
+
+        .member-name {
+          display: block;
+          font-size: 30rpx;
+          color: #333;
+          font-weight: 500;
+          margin-bottom: 8rpx;
+        }
+
+        .member-student-no {
+          display: block;
+          font-size: 24rpx;
+          color: #999;
+        }
+      }
+
+      .member-status {
+        text-align: right;
+        min-width: 200rpx;
+
+        .status-text {
+          display: block;
+          font-size: 26rpx;
+          font-weight: 500;
+          margin-bottom: 8rpx;
+        }
+
+        .status-checked {
+          color: #52c41a;
+        }
+
+        .status-unchecked {
+          color: #999;
+        }
+
+        .member-checkin-time {
+          margin-bottom: 8rpx;
+
+          .time-text {
+            font-size: 22rpx;
+            color: #666;
+          }
+        }
+
+        .member-location {
+          .location-text {
+            font-size: 22rpx;
+            color: #666;
+            word-break: break-all;
+            line-height: 1.4;
+          }
+        }
+      }
+    }
+
+    .member-item__actions {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 20rpx;
+      z-index: 1;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 100rpx;
+      height: 88rpx;
+      border-radius: 44rpx;
+      background: #0052d9;
+      padding: 0 32rpx;
+
+      &--toggle {
+        background: #0052d9;
+      }
+
+      .action-text {
+        font-size: 26rpx;
+        color: #fff;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .empty-record {
+    text-align: center;
+    padding: 60rpx 0;
+    color: #999;
+    font-size: 28rpx;
+  }
+}

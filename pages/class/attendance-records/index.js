@@ -49,18 +49,29 @@ Page({
       }
 
       const records = result.data || [];
-      // 格式化时间和定位信息
-      const checkInRecords = records.map((record) => ({
-        ...record,
-        createdAtText: this.formatTime(record.createdAt),
-        memberStatusList: (record.memberStatusList || []).map((member) => ({
+      console.log(`[签到记录] 收到 ${records.length} 条记录`);
+      
+      // 格式化时间和定位信息，并重新计算签到人数
+      const checkInRecords = records.map((record) => {
+        const memberStatusList = (record.memberStatusList || []).map((member) => ({
           ...member,
           latitudeText: member.latitude ? Number(member.latitude).toFixed(6) : '',
           longitudeText: member.longitude ? Number(member.longitude).toFixed(6) : '',
-        })),
-      }));
+        }));
+
+        // 重新计算签到人数（基于实际的签到状态，与详情页面保持一致）
+        const checkedInCount = memberStatusList.filter((m) => m.hasCheckedIn).length;
+
+        return {
+          ...record,
+          createdAtText: this.formatTime(record.createdAt),
+          memberStatusList: memberStatusList,
+          checkedInCount: checkedInCount, // 使用重新计算的值
+        };
+      });
 
       wx.hideLoading();
+      console.log(`[签到记录] 格式化后 ${checkInRecords.length} 条记录`);
       this.setData({ checkInRecords });
     } catch (error) {
       wx.hideLoading();
@@ -92,5 +103,17 @@ Page({
     const hour = String(date.getHours()).padStart(2, '0');
     const minute = String(date.getMinutes()).padStart(2, '0');
     return `${year}-${month}-${day} ${hour}:${minute}`;
+  },
+
+  /** 点击签到记录 */
+  onRecordTap(e) {
+    const { code, index } = e.currentTarget.dataset;
+    const record = this.data.checkInRecords[index];
+    if (!record) return;
+
+    // 跳转到详情页面
+    wx.navigateTo({
+      url: `/pages/class/attendance-record-detail/index?courseId=${this.data.courseId}&code=${code}`,
+    });
   },
 });

@@ -3,7 +3,7 @@
   <view class="attendance-records__content">
     <view class="checkin-records" wx:if="{{checkInRecords.length > 0}}">
       <block wx:for="{{checkInRecords}}" wx:for-item="record" wx:key="code">
-        <view class="record-item">
+        <view class="record-item" bindtap="onRecordTap" data-code="{{record.code}}" data-index="{{index}}">
           <view class="record-header">
             <view class="record-code">签到码：{{record.code}}</view>
             <view class="record-time">{{record.createdAtText}}</view>
@@ -15,22 +15,8 @@
           <view class="record-stats">
             <text>已签到：{{record.checkedInCount}}/{{record.totalMembers}}</text>
           </view>
-          <view class="record-members">
-            <block wx:for="{{record.memberStatusList}}" wx:for-item="member" wx:key="userId">
-              <view class="member-item">
-                <view class="member-info">
-                  <text class="member-name">{{member.name}}</text>
-                  <text class="member-student-no" wx:if="{{member.studentNo}}">{{member.studentNo}}</text>
-                </view>
-                <view class="member-status">
-                  <text class="status-text" wx:if="{{member.hasCheckedIn}}">已签到</text>
-                  <text class="status-text status-unchecked" wx:else>未签到</text>
-                  <view class="member-location" wx:if="{{member.hasCheckedIn && member.latitudeText && member.longitudeText}}">
-                    <text class="location-text">定位：{{member.latitudeText}}, {{member.longitudeText}}</text>
-                  </view>
-                </view>
-              </view>
-            </block>
+          <view class="record-arrow">
+            <text class="arrow-icon">></text>
           </view>
         </view>
       </block>

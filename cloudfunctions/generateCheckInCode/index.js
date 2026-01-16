@@ -45,12 +45,18 @@ exports.main = async (event) => {
       return { code: 403, success: false, message: '无权限生成签到码' };
     }
 
-    // 删除该课程之前的签到码
+    // 将之前的签到码标记为已过期（不删除，保留历史记录）
+    const now = Date.now();
     await checkInCodes
       .where({
         courseId: courseId,
+        expireTime: db.command.gt(now), // 只更新未过期的签到码
       })
-      .remove();
+      .update({
+        data: {
+          expireTime: now - 1, // 设置为已过期
+        },
+      });
 
     // 创建新签到码
     await checkInCodes.add({

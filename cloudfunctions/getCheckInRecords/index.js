@@ -41,13 +41,16 @@ exports.main = async (event) => {
       }
     }
 
-    // 获取所有签到码记录（按创建时间倒序）
+    // 获取所有签到码记录（按创建时间倒序，包括已过期的）
+    // 注意：不过滤过期时间，以显示所有历史记录
     const codesRes = await checkInCodes
       .where({
         courseId: courseId,
       })
       .orderBy('createdAt', 'desc')
       .get();
+    
+    console.log(`[getCheckInRecords] 找到 ${codesRes.data.length} 条签到码记录`);
 
     const recordsList = [];
 
@@ -83,13 +86,23 @@ exports.main = async (event) => {
       const records = recordsRes.data || [];
       const recordMap = {};
       records.forEach((r) => {
-        recordMap[r.openid] = r;
+        // 使用 userId 作为 key，因为 updateCheckInStatus 使用 userId 来查询和保存
+        if (r.userId) {
+          recordMap[r.userId] = r;
+        } else if (r.openid) {
+          // 兼容旧数据：如果没有 userId，使用 openid
+          const user = Object.values(userMap).find(u => u.openid === r.openid);
+          if (user && user._id) {
+            recordMap[user._id] = r;
+          }
+        }
       });
 
       // 构建成员签到状态列表
       const memberStatusList = allMembersRes.data.map((member) => {
         const user = userMap[member.openid] || {};
-        const record = recordMap[member.openid];
+        // 使用 userId 来匹配记录
+        const record = user._id ? recordMap[user._id] : null;
 
         // 解密学号
         let studentNo = '';
