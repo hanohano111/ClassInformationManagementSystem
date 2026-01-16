@@ -1,0 +1,41 @@
+<!--pages/home/archived/index.wxml-->
+<view class="page message-page page-with-navbar">
+  <t-navbar title="归档消息" left-arrow />
+  <view class="message-page__content">
+    <!-- 归档消息列表 -->
+    <view class="message-list" wx:if="{{archivedList.length > 0}}">
+      <view
+        class="message-item"
+        wx:for="{{archivedList}}"
+        wx:for-item="item"
+        wx:for-index="index"
+        wx:key="index"
+        bindtap="onMessageTap"
+        data-index="{{index}}"
+      >
+        <view class="message-item__header">
+          <view class="message-item__title-row">
+            <text class="message-item__course">{{item.courseName}}</text>
+            <text class="message-item__type">{{item.typeText}}</text>
+          </view>
+          <text class="message-item__time">{{item.timeText}}</text>
+        </view>
+        <view class="message-item__body">
+          <text class="message-item__title">{{item.title}}</text>
+          <text class="message-item__content" wx:if="{{item.content}}">{{item.content}}</text>
+        </view>
+        <view class="message-item__actions">
+          <view class="action-btn action-btn--unarchive" bindtap="onUnarchive" data-index="{{index}}" catchtap="true">
+            <t-icon name="folder-delete" size="32rpx" color="#fff" />
+            <text>取消归档</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="message-empty" wx:else>
+      <t-empty description="暂无归档消息" />
+    </view>
+  </view>
+</view>
