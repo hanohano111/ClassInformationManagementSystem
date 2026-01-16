@@ -1,0 +1,41 @@
+<t-navbar title="通知" left-arrow />
+<view class="page notices page-with-navbar">
+  <view class="notices__content">
+    <!-- 管理员：创建通知按钮 -->
+    <view class="notices__actions" wx:if="{{isAdmin}}">
+      <t-button theme="primary" block bindtap="goToCreateNotice">
+        发布通知
+      </t-button>
+    </view>
+
+    <!-- 通知列表 -->
+    <view class="notices__list" wx:if="{{noticeList.length > 0}}">
+      <t-cell-group theme="card">
+        <block wx:for="{{noticeList}}" wx:for-item="item" wx:key="id">
+          <t-cell
+            title="{{item.title}}"
+            note="{{item.creatorName}} · {{item.createdAtText}}"
+            arrow
+            bindclick="goToNoticeDetail"
+            data-notice-id="{{item.id}}"
+          >
+            <t-icon slot="icon" name="notification" size="40rpx" color="#0052d9" />
+            <view slot="note" class="notice-meta">
+              <text>{{item.creatorName}}</text>
+              <text class="notice-time">{{item.createdAtText}}</text>
+              <text class="notice-attachment" wx:if="{{item.attachments && item.attachments.length > 0}}">
+                <t-icon name="attach" size="24rpx" />
+                {{item.attachments.length}}个附件
+              </text>
+            </view>
+          </t-cell>
+        </block>
+      </t-cell-group>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="notices__empty" wx:else>
+      <t-empty description="暂无通知" />
+    </view>
+  </view>
+</view>

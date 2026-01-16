@@ -3,6 +3,37 @@
   min-height: 100vh;
   
   &__content {
-    padding: 24rpx;
+    padding: 32rpx;
+  }
+
+  &__actions {
+    margin-bottom: 32rpx;
+  }
+}
+
+.add-member-popup {
+  background: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 32rpx;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32rpx;
+
+    .add-member-title {
+      font-size: 32rpx;
+      font-weight: 600;
+      color: #000000e6;
+    }
+  }
+
+  &__body {
+    .form-tip {
+      font-size: 28rpx;
+      color: #666;
+      line-height: 1.6;
+    }
   }
 }

@@ -1,0 +1,81 @@
+<t-navbar title="请假详情" left-arrow />
+<view class="page leave-detail page-with-navbar">
+  <view class="leave-detail__content">
+    <!-- 请假信息 -->
+    <view class="leave-detail__header">
+      <view class="leave-student">{{leave.studentName}}</view>
+      <view class="leave-status-badge" data-status="{{leave.status}}">
+        {{leave.statusText}}
+      </view>
+    </view>
+
+    <!-- 请假时间 -->
+    <view class="leave-detail__date">
+      <view class="section-title">请假时间</view>
+      <view class="leave-date">{{leave.dateText}}</view>
+    </view>
+
+    <!-- 请假原因 -->
+    <view class="leave-detail__body">
+      <view class="section-title">请假原因</view>
+      <view class="leave-reason">{{leave.reason}}</view>
+    </view>
+
+    <!-- 附件列表 -->
+    <view class="leave-detail__attachments" wx:if="{{leave.attachments && leave.attachments.length > 0}}">
+      <view class="section-title">附件（{{leave.attachments.length}}）</view>
+      <view class="attachments-list">
+        <block wx:for="{{leave.attachments}}" wx:for-item="item" wx:key="index">
+          <view class="attachment-item" bindtap="previewAttachment" data-url="{{item.url}}" data-name="{{item.name}}">
+            <t-icon name="attach" size="32rpx" color="#0052d9" />
+            <view class="attachment-info">
+              <view class="attachment-name">{{item.name}}</view>
+              <view class="attachment-size" wx:if="{{item.size}}">{{item.sizeText}}</view>
+            </view>
+            <t-icon name="chevron-right" size="24rpx" color="#999" />
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 审批意见（管理员可见或已审批） -->
+    <view class="leave-detail__comment" wx:if="{{leave.comment || (isAdmin && leave.status === 0)}}">
+      <view class="section-title">审批意见</view>
+      <view class="leave-comment" wx:if="{{leave.comment}}">{{leave.comment}}</view>
+      <view class="leave-comment-empty" wx:else>待审批</view>
+    </view>
+
+    <!-- 管理员审批按钮 -->
+    <view class="leave-detail__actions" wx:if="{{isAdmin && leave.status === 0}}">
+      <t-button theme="default" block bindtap="showApproveModal" style="margin-bottom: 16rpx;">
+        审批
+      </t-button>
+    </view>
+  </view>
+
+  <!-- 审批弹窗 -->
+  <t-popup visible="{{showApprovePopup}}" bind:visible-change="onApprovePopupChange" placement="bottom">
+    <view class="approve-popup">
+      <view class="approve-popup__header">
+        <text class="approve-title">审批请假</text>
+        <t-icon name="close" size="32rpx" bindtap="closeApprovePopup" />
+      </view>
+      <view class="approve-popup__body">
+        <t-textarea
+          placeholder="请输入审批意见（可选）"
+          value="{{approveComment}}"
+          bindchange="onApproveCommentInput"
+          maxlength="200"
+        />
+      </view>
+      <view class="approve-popup__actions">
+        <t-button theme="default" block bindtap="rejectLeave" style="margin-bottom: 16rpx;">
+          拒绝
+        </t-button>
+        <t-button theme="primary" block bindtap="approveLeave">
+          通过
+        </t-button>
+      </view>
+    </view>
+  </t-popup>
+</view>

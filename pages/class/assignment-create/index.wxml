@@ -1,0 +1,71 @@
+<t-navbar title="发布作业" left-arrow />
+<view class="page assignment-create page-with-navbar">
+  <view class="assignment-create__content">
+    <view class="form-section">
+      <view class="form-item">
+        <t-input
+          label="标题"
+          placeholder="请输入作业标题"
+          value="{{form.title}}"
+          bindchange="onTitleInput"
+          maxlength="100"
+        />
+      </view>
+
+      <view class="form-item">
+        <t-textarea
+          label="正文"
+          placeholder="请输入作业要求内容"
+          value="{{form.content}}"
+          bindchange="onContentInput"
+          maxlength="2000"
+          indicator
+          autosize
+        />
+      </view>
+
+      <view class="form-item">
+        <t-date-time-picker
+          label="截止时间"
+          value="{{form.deadline}}"
+          bindchange="onDeadlineChange"
+          mode="datetime"
+        />
+      </view>
+
+      <!-- 附件列表 -->
+      <view class="form-item" wx:if="{{form.attachments.length > 0}}">
+        <view class="form-label">附件（{{form.attachments.length}}）</view>
+        <view class="attachments-list">
+          <block wx:for="{{form.attachments}}" wx:for-item="item" wx:key="index">
+            <view class="attachment-item">
+              <t-icon name="attach" size="32rpx" color="#0052d9" />
+              <view class="attachment-info">
+                <view class="attachment-name">{{item.name}}</view>
+                <view class="attachment-size" wx:if="{{item.size}}">{{item.sizeText}}</view>
+              </view>
+              <t-icon name="close" size="24rpx" color="#999" bindtap="removeAttachment" data-index="{{index}}" />
+            </view>
+          </block>
+        </view>
+      </view>
+
+      <!-- 添加附件按钮 -->
+      <view class="form-item">
+        <t-button theme="default" variant="outline" block bindtap="addAttachment">
+          添加附件
+        </t-button>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="assignment-create__actions">
+      <t-button theme="default" block bindtap="cancel" style="margin-bottom: 16rpx;">
+        取消
+      </t-button>
+      <t-button theme="primary" block bindtap="submit" loading="{{submitting}}">
+        发布
+      </t-button>
+    </view>
+  </view>
+</view>

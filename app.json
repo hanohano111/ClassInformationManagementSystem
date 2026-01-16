@@ -65,10 +65,22 @@
         "attendance/index",
         "info/index",
         "admin/index",
-        "members/index"
+        "members/index",
+        "notices/index",
+        "notice-detail/index",
+        "notice-create/index",
+        "assignments/index",
+        "assignment-detail/index",
+        "assignment-create/index",
+        "assignment-submit/index",
+        "leave/index",
+        "leave-detail/index",
+        "leave-create/index",
+        "attendance-records/index"
       ]
     }
   ],
+  "requiredBackgroundModes": ["location"],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
@@ -80,11 +92,11 @@
     "list": [
       {
         "pagePath": "pages/home/index",
-        "text": "首页"
+        "text": "消息"
       },
       {
         "pagePath": "pages/message/index",
-        "text": "课程"
+        "text": "班级"
       },
       {
         "pagePath": "pages/my/index",
@@ -95,5 +107,13 @@
   "resolveAlias": {
     "~/*": "/*"
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于定位签到功能"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
   "sitemapLocation": "sitemap.json"
 }

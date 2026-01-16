@@ -1,0 +1,67 @@
+<t-navbar title="申请请假" left-arrow />
+<view class="page leave-create page-with-navbar">
+  <view class="leave-create__content">
+    <view class="form-section">
+      <view class="form-item">
+        <t-textarea
+          label="请假原因"
+          placeholder="请输入请假原因"
+          value="{{form.reason}}"
+          bindchange="onReasonInput"
+          maxlength="500"
+          indicator
+          autosize
+        />
+      </view>
+
+      <view class="form-item">
+        <picker
+          mode="date"
+          value="{{form.date}}"
+          bindchange="onDateChange"
+          start="{{minDate}}"
+        >
+          <view class="picker-display">
+            <text>{{form.date || '请选择请假日期'}}</text>
+            <t-icon name="chevron-right" size="32rpx" color="#999" />
+          </view>
+        </picker>
+      </view>
+
+      <!-- 附件列表 -->
+      <view class="form-item" wx:if="{{form.attachments.length > 0}}">
+        <view class="form-label">附件（{{form.attachments.length}}）</view>
+        <view class="attachments-list">
+          <block wx:for="{{form.attachments}}" wx:for-item="item" wx:key="index">
+            <view class="attachment-item">
+              <t-icon name="attach" size="32rpx" color="#0052d9" />
+              <view class="attachment-info">
+                <view class="attachment-name">{{item.name}}</view>
+                <view class="attachment-size" wx:if="{{item.size}}">{{item.sizeText}}</view>
+              </view>
+              <t-icon name="close" size="24rpx" color="#999" bindtap="removeAttachment" data-index="{{index}}" />
+            </view>
+          </block>
+        </view>
+      </view>
+
+      <!-- 添加附件按钮 -->
+      <view class="form-item">
+        <t-button theme="default" variant="outline" block bindtap="addAttachment">
+          添加附件
+        </t-button>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="leave-create__actions">
+      <t-button theme="default" block bindtap="cancel" style="margin-bottom: 16rpx;">
+        取消
+      </t-button>
+      <t-button theme="primary" block bindtap="submit" loading="{{submitting}}">
+        提交
+      </t-button>
+    </view>
+  </view>
+
+</view>

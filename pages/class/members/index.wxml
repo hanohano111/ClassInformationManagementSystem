@@ -1,6 +1,13 @@
 <t-navbar title="课程成员" left-arrow />
 <view class="page class-members page-with-navbar">
   <view class="class-members__content">
+    <!-- 管理员：添加成员按钮 -->
+    <view class="class-members__actions" wx:if="{{isAdmin}}">
+      <t-button theme="primary" block bindtap="showAddMemberModal">
+        添加成员
+      </t-button>
+    </view>
+
     <t-cell-group theme="card">
       <t-cell title="课程成员" note="{{memberList.length}}人" />
       <block wx:for="{{memberList}}" wx:for-item="item" wx:key="userId">
@@ -11,4 +18,34 @@
       </block>
     </t-cell-group>
   </view>
+
+  <!-- 添加成员弹窗 -->
+  <t-popup visible="{{showAddMemberPopup}}" bind:visible-change="onAddMemberPopupChange" placement="bottom">
+    <view class="add-member-popup">
+      <view class="add-member-popup__header">
+        <text class="add-member-title">添加成员</text>
+        <t-icon name="close" size="32rpx" bindtap="closeAddMemberPopup" />
+      </view>
+      <view class="add-member-popup__body">
+        <view class="form-item">
+          <t-input
+            label="学号"
+            placeholder="请输入学号搜索"
+            value="{{searchStudentNo}}"
+            bindchange="onStudentNoInput"
+            maxlength="20"
+          />
+        </view>
+        <view class="form-tip">通过学号搜索并添加成员到课程</view>
+        <view class="add-member-popup__actions">
+          <t-button theme="default" block bindtap="closeAddMemberPopup" style="margin-bottom: 16rpx;">
+            取消
+          </t-button>
+          <t-button theme="primary" block bindtap="searchAndAddMember" loading="{{searching}}">
+            搜索并添加
+          </t-button>
+        </view>
+      </view>
+    </view>
+  </t-popup>
 </view>

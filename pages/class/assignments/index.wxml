@@ -1,0 +1,28 @@
+<t-navbar title="作业" left-arrow />
+<view class="page assignments page-with-navbar">
+  <view class="assignments__content">
+    <!-- 管理员：创建作业按钮 -->
+    <view class="assignments__actions" wx:if="{{isAdmin}}">
+      <t-button theme="primary" block bindtap="goToCreateAssignment">
+        发布作业
+      </t-button>
+    </view>
+
+    <!-- 作业列表 -->
+    <view class="assignments__list" wx:if="{{assignmentList.length > 0}}">
+      <view class="assignment-item" wx:for="{{assignmentList}}" wx:for-item="item" wx:key="id" bindtap="goToAssignmentDetail" data-assignment-id="{{item.id}}">
+        <view class="assignment-item__title">{{item.title}}</view>
+        <view class="assignment-item__status">
+          <text class="status-tag status-tag--submitted" wx:if="{{item.hasSubmitted}}">已提交</text>
+          <text class="status-tag status-tag--overdue" wx:if="{{item.isOverdue && !item.hasSubmitted}}">已过期</text>
+          <text class="status-tag status-tag--pending" wx:if="{{!item.hasSubmitted && !item.isOverdue}}">未提交</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="assignments__empty" wx:else>
+      <t-empty description="暂无作业" />
+    </view>
+  </view>
+</view>

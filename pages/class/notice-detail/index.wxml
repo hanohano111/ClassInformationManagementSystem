@@ -1,0 +1,36 @@
+<t-navbar title="通知详情" left-arrow />
+<view class="page notice-detail page-with-navbar">
+  <view class="notice-detail__content">
+    <!-- 通知标题 -->
+    <view class="notice-detail__header">
+      <view class="notice-title">{{notice.title}}</view>
+      <view class="notice-meta">
+        <text class="meta-item">{{notice.creatorName}}</text>
+        <text class="meta-divider">·</text>
+        <text class="meta-item">{{notice.createdAtText}}</text>
+      </view>
+    </view>
+
+    <!-- 通知正文 -->
+    <view class="notice-detail__body">
+      <view class="notice-content">{{notice.content}}</view>
+    </view>
+
+    <!-- 附件列表 -->
+    <view class="notice-detail__attachments" wx:if="{{notice.attachments && notice.attachments.length > 0}}">
+      <view class="attachments-title">附件（{{notice.attachments.length}}）</view>
+      <view class="attachments-list">
+        <block wx:for="{{notice.attachments}}" wx:for-item="item" wx:key="index">
+          <view class="attachment-item" bindtap="previewAttachment" data-url="{{item.url}}" data-name="{{item.name}}">
+            <t-icon name="attach" size="32rpx" color="#0052d9" />
+            <view class="attachment-info">
+              <view class="attachment-name">{{item.name}}</view>
+              <view class="attachment-size" wx:if="{{item.size}}">{{item.sizeText}}</view>
+            </view>
+            <t-icon name="chevron-right" size="24rpx" color="#999" />
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+</view>

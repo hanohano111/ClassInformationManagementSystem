@@ -1,0 +1,35 @@
+<t-navbar title="请假申请" left-arrow />
+<view class="page leave page-with-navbar">
+  <view class="leave__content">
+    <!-- 创建请假按钮 -->
+    <view class="leave__actions">
+      <t-button theme="primary" block bindtap="goToCreateLeave">
+        申请请假
+      </t-button>
+    </view>
+
+    <!-- 请假列表 -->
+    <view class="leave__list" wx:if="{{leaveList.length > 0}}">
+      <view class="leave-item" wx:for="{{leaveList}}" wx:for-item="item" wx:key="id" bindtap="goToLeaveDetail" data-leave-id="{{item.id}}">
+        <view class="leave-item__content">
+          <view class="leave-item__title">{{item.reason}}</view>
+          <view class="leave-item__meta">
+            <text class="meta-student-name" wx:if="{{item.studentName}}">{{item.studentName}}</text>
+            <text class="meta-student-no" wx:if="{{item.studentNo}}">({{item.studentNo}})</text>
+          </view>
+          <view class="leave-item__date" wx:if="{{item.dateText}}">
+            请假时间：{{item.dateText}}
+          </view>
+        </view>
+        <view class="leave-item__status">
+          <text class="status-tag status-tag--{{item.status}}">{{item.statusText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="leave__empty" wx:else>
+      <t-empty description="暂无请假申请" />
+    </view>
+  </view>
+</view>

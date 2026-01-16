@@ -11,34 +11,58 @@
         剩余时间：{{remainTimeText}}
       </view>
     </view>
-    <t-button theme="primary" block bindtap="generateCheckInCode">
+    <t-button theme="primary" block bindtap="showGenerateCodePopup">
       {{currentCheckInCode ? '重新生成签到码' : '生成签到码'}}
     </t-button>
   </view>
 
+  <!-- 生成签到码弹窗 -->
+  <t-popup visible="{{showGeneratePopup}}" bind:visible-change="onGeneratePopupChange" placement="center">
+    <view class="generate-popup">
+      <view class="popup-title">生成签到码</view>
+      <view class="popup-content">
+        <view class="form-item">
+          <view class="form-label">签到提示</view>
+          <t-textarea
+            placeholder="请输入签到提示信息（如：第1节课签到、实验课签到等）"
+            value="{{generateForm.note}}"
+            bindchange="onGenerateNoteInput"
+            maxlength="100"
+            indicator
+            autosize
+          />
+        </view>
+      </view>
+      <view class="popup-actions">
+        <t-button theme="default" size="medium" bindtap="cancelGenerate">取消</t-button>
+        <t-button theme="primary" size="medium" bindtap="confirmGenerate">生成</t-button>
+      </view>
+    </view>
+  </t-popup>
+
   <!-- 签到码签到 -->
   <view class="attendance__section">
     <view class="section-title">签到码签到</view>
+    <view class="location-tip">
+      请输入4位签到码，确认签到时会同时获取您的位置信息
+    </view>
     <t-input
-      placeholder="请输入6位签到码"
+      placeholder="请输入4位签到码"
       value="{{checkInCodeInput}}"
-      maxlength="6"
-      bindinput="onCheckInCodeInput"
+      maxlength="4"
+      type="number"
+      bindchange="onCheckInCodeInput"
     />
     <t-button theme="primary" block bindtap="checkInByCode" style="margin-top: 24rpx;">
       确认签到
     </t-button>
   </view>
 
-  <!-- 定位签到 -->
-  <view class="attendance__section">
-    <view class="section-title">定位签到</view>
-    <view class="location-tip">
-      点击下方按钮进行定位签到，系统将获取您的精确位置信息
-    </view>
-      <t-button theme="primary" block bindtap="checkInByLocation" style="margin-top: 24rpx;">
-        开始定位签到
-      </t-button>
-    </view>
+  <!-- 签到记录入口（仅管理员可见） -->
+  <view class="attendance__section" wx:if="{{isAdmin}}">
+    <t-button theme="default" variant="outline" block bindtap="goToAttendanceRecords">
+      查看签到记录
+    </t-button>
+  </view>
   </view>
 </view>

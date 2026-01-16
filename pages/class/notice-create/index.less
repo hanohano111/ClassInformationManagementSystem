@@ -1,0 +1,62 @@
+.notice-create {
+  background-color: #f5f7fa;
+  min-height: 100vh;
+
+  &__content {
+    padding: 32rpx;
+  }
+
+  .form-section {
+    background: #fff;
+    border-radius: 24rpx;
+    padding: 32rpx;
+    margin-bottom: 32rpx;
+
+    .form-item {
+      margin-bottom: 32rpx;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .form-label {
+        font-size: 28rpx;
+        color: #333;
+        margin-bottom: 16rpx;
+      }
+
+      .attachments-list {
+        margin-top: 16rpx;
+
+        .attachment-item {
+          display: flex;
+          align-items: center;
+          padding: 24rpx;
+          background: #f5f7fa;
+          border-radius: 16rpx;
+          margin-bottom: 16rpx;
+
+          .attachment-info {
+            flex: 1;
+            margin-left: 16rpx;
+
+            .attachment-name {
+              font-size: 28rpx;
+              color: #333;
+              margin-bottom: 8rpx;
+            }
+
+            .attachment-size {
+              font-size: 24rpx;
+              color: #999;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &__actions {
+    margin-top: 32rpx;
+  }
+}

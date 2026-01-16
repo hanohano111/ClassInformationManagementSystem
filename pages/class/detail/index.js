@@ -107,25 +107,25 @@ Page({
 
   /** 进入通知页面 */
   goToNotices() {
-    wx.showToast({
-      title: '功能开发中',
-      icon: 'none',
+    const classId = this.data.classId || this.data.classInfo?.id;
+    wx.navigateTo({
+      url: `/pages/class/notices/index?classId=${classId}`,
     });
   },
 
   /** 进入作业页面 */
   goToAssignments() {
-    wx.showToast({
-      title: '功能开发中',
-      icon: 'none',
+    const classId = this.data.classId || this.data.classInfo?.id;
+    wx.navigateTo({
+      url: `/pages/class/assignments/index?classId=${classId}`,
     });
   },
 
   /** 进入请假申请页面 */
   goToLeave() {
-    wx.showToast({
-      title: '功能开发中',
-      icon: 'none',
+    const classId = this.data.classId || this.data.classInfo?.id;
+    wx.navigateTo({
+      url: `/pages/class/leave/index?classId=${classId}`,
     });
   },
 

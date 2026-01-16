@@ -1,6 +1,4 @@
 // pages/class/attendance/index.js
-import request from '~/api/request';
-import { generateClassCode } from '~/utils/util';
 
 Page({
   data: {
@@ -13,6 +11,10 @@ Page({
     remainTimeText: '', // 剩余时间文本
     checkInCodeInput: '', // 输入的签到码
     location: null, // 定位信息
+    showGeneratePopup: false, // 显示生成签到码弹窗
+    generateForm: {
+      note: '', // 签到提示
+    },
   },
 
   onLoad(options) {
@@ -20,9 +22,13 @@ Page({
     if (classId && courseId) {
       this.setData({ classId, courseId });
       this.loadClassInfo(classId);
-      this.checkAdminStatus(classId);
-      this.loadCurrentCheckInCode().then(() => {
-        this.startTimer();
+      this.checkAdminStatus(classId).then(() => {
+        // 只有管理员才加载签到码
+        if (this.data.isAdmin) {
+          this.loadCurrentCheckInCode().then(() => {
+            this.startTimer();
+          });
+        }
       });
     }
   },
@@ -78,31 +84,55 @@ Page({
       const result = res.result || {};
       const isAdmin = result.data?.isAdmin || false;
       this.setData({ isAdmin });
+      return Promise.resolve(isAdmin);
     } catch (error) {
       console.error('检查管理员状态失败:', error);
       // 默认不是管理员
       this.setData({ isAdmin: false });
+      return Promise.resolve(false);
     }
   },
 
-  /** 加载当前签到码 */
+  /** 加载当前签到码（仅管理员） */
   async loadCurrentCheckInCode() {
+    if (!this.data.isAdmin) {
+      return;
+    }
     try {
-      const res = await request(`/api/course/${this.data.courseId}/checkin/current`, 'GET');
-      const data = res.data?.data || {};
-      if (data.code && data.expireTime) {
-        this.setData({
-          currentCheckInCode: data.code,
-          checkInCodeExpireTime: data.expireTime,
-        });
+      const res = await wx.cloud.callFunction({
+        name: 'getCheckInCode',
+        data: {
+          courseId: this.data.courseId,
+        },
+      });
+      const result = res.result || {};
+      if (result.code === 200 && result.data) {
+        const { code, expireTime } = result.data;
+        if (code && expireTime) {
+          this.setData({
+            currentCheckInCode: code,
+            checkInCodeExpireTime: expireTime,
+          });
+        }
       }
     } catch (error) {
-      console.error('加载签到码失败:', error);
+      // 如果签到码不存在，不显示错误
+      console.log('当前无签到码');
     }
   },
 
-  /** 生成签到码（管理员） */
-  async generateCheckInCode() {
+  /** 生成4位随机数字签到码 */
+  generateCheckInCode() {
+    const chars = '0123456789';
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  },
+
+  /** 显示生成签到码弹窗 */
+  showGenerateCodePopup() {
     if (!this.data.isAdmin) {
       wx.showToast({
         title: '无权限操作',
@@ -110,19 +140,68 @@ Page({
       });
       return;
     }
+    this.setData({
+      showGeneratePopup: true,
+      generateForm: {
+        note: '',
+      },
+    });
+  },
+
+  /** 弹窗显示状态变化 */
+  onGeneratePopupChange(e) {
+    this.setData({
+      showGeneratePopup: e.detail.visible,
+    });
+  },
+
+  /** 签到提示输入 */
+  onGenerateNoteInput(e) {
+    this.setData({
+      'generateForm.note': e.detail.value || '',
+    });
+  },
+
+  /** 取消生成 */
+  cancelGenerate() {
+    this.setData({
+      showGeneratePopup: false,
+      generateForm: {
+        note: '',
+      },
+    });
+  },
+
+  /** 确认生成签到码 */
+  async confirmGenerate() {
+    const { generateForm, courseId } = this.data;
 
     wx.showLoading({ title: '生成中...' });
 
     try {
-      // 生成6位签到码
-      const checkInCode = generateClassCode();
+      // 生成4位随机数字签到码
+      const checkInCode = this.generateCheckInCode();
       // 设置5分钟过期时间
       const expireTime = Date.now() + 5 * 60 * 1000;
 
-      const res = await request(`/api/course/${this.data.courseId}/checkin/generate`, 'POST', {
-        code: checkInCode,
-        expireTime,
+      const res = await wx.cloud.callFunction({
+        name: 'generateCheckInCode',
+        data: {
+          courseId: courseId,
+          code: checkInCode,
+          expireTime: expireTime,
+          note: (generateForm.note || '').trim(), // 签到提示
+        },
       });
+
+      if (!res || !res.result) {
+        throw { message: '云函数调用失败，请检查云函数是否已上传', data: res };
+      }
+
+      const result = res.result || {};
+      if (result.code !== 200) {
+        throw { message: result.message || '生成失败', data: result };
+      }
 
       wx.hideLoading();
 
@@ -134,6 +213,10 @@ Page({
         currentCheckInCode: checkInCode,
         checkInCodeExpireTime: expireTime,
         remainTimeText: `${minutes}分${seconds}秒`,
+        showGeneratePopup: false,
+        generateForm: {
+          note: '',
+        },
       });
 
       // 启动定时器更新剩余时间
@@ -145,38 +228,116 @@ Page({
       });
     } catch (error) {
       wx.hideLoading();
+      
+      let errorMsg = '生成失败';
+      if (error.errMsg && error.errMsg.includes('FUNCTION_NOT_FOUND')) {
+        errorMsg = '云函数未找到，请先上传 generateCheckInCode 云函数';
+      } else if (error.data?.message) {
+        errorMsg = error.data.message;
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+      
       wx.showToast({
-        title: error.data?.message || error.message || '生成失败',
+        title: errorMsg,
         icon: 'none',
+        duration: 3000,
       });
     }
   },
 
   /** 签到码输入 */
   onCheckInCodeInput(e) {
+    // t-input 的 bindchange 事件，value 在 e.detail.value 中
+    let value = String(e.detail.value || '').replace(/\D/g, '');
+    // 限制为4位数字
+    value = value.slice(0, 4);
     this.setData({
-      checkInCodeInput: e.detail.value.toUpperCase(),
+      checkInCodeInput: value,
     });
+    console.log('[签到码输入] 当前值:', value, '长度:', value.length);
   },
 
-  /** 签到码签到 */
+  /** 签到码签到（同时进行定位签到） */
   async checkInByCode() {
     const { checkInCodeInput, courseId } = this.data;
 
-    if (!checkInCodeInput || checkInCodeInput.length !== 6) {
+    // 验证签到码
+    const code = String(checkInCodeInput || '').trim();
+    console.log('[签到码签到] 输入的签到码:', code, '长度:', code.length);
+    
+    if (!code || code.length !== 4) {
       wx.showToast({
-        title: '请输入6位签到码',
+        title: '请输入4位签到码',
         icon: 'none',
       });
       return;
     }
 
+    // 先获取定位
+    wx.showLoading({ title: '获取定位中...' });
+    let location = null;
+
+    try {
+      // 检查定位权限
+      const settingRes = await wx.getSetting();
+      if (!settingRes.authSetting['scope.userLocation']) {
+        await wx.authorize({
+          scope: 'scope.userLocation',
+        });
+      }
+
+      // 获取精确定位
+      location = await this.getPreciseLocation();
+    } catch (authError) {
+      wx.hideLoading();
+      if (authError.errMsg && (authError.errMsg.includes('auth deny') || authError.errMsg.includes('authorize'))) {
+        wx.showModal({
+          title: '需要位置权限',
+          content: '签到需要获取您的位置信息，请在设置中开启位置权限',
+          showCancel: false,
+        });
+      } else {
+        wx.showToast({
+          title: '获取定位失败，请重试',
+          icon: 'none',
+        });
+      }
+      return;
+    }
+
+    if (!location) {
+      wx.hideLoading();
+      wx.showToast({
+        title: '获取定位失败，请重试',
+        icon: 'none',
+      });
+      return;
+    }
+
+    // 进行签到（同时提交签到码和定位信息）
     wx.showLoading({ title: '签到中...' });
 
     try {
-      const res = await request(`/api/course/${courseId}/checkin/code`, 'POST', {
-        code: checkInCodeInput,
+      const res = await wx.cloud.callFunction({
+        name: 'checkInByCode',
+        data: {
+          courseId: courseId,
+          code: code,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          accuracy: location.accuracy || 0,
+        },
       });
+
+      if (!res || !res.result) {
+        throw { message: '云函数调用失败，请检查云函数是否已上传', data: res };
+      }
+
+      const result = res.result || {};
+      if (result.code !== 200) {
+        throw { message: result.message || '签到失败', data: result };
+      }
 
       wx.hideLoading();
       wx.showToast({
@@ -188,61 +349,24 @@ Page({
       this.setData({
         checkInCodeInput: '',
       });
+
     } catch (error) {
       wx.hideLoading();
+      
+      let errorMsg = '签到失败';
+      if (error.errMsg && error.errMsg.includes('FUNCTION_NOT_FOUND')) {
+        errorMsg = '云函数未找到，请先上传 checkInByCode 云函数';
+      } else if (error.data?.message) {
+        errorMsg = error.data.message;
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+      
       wx.showToast({
-        title: error.data?.message || error.message || '签到失败',
+        title: errorMsg,
         icon: 'none',
+        duration: 3000,
       });
-    }
-  },
-
-  /** 定位签到 */
-  async checkInByLocation() {
-    wx.showLoading({ title: '获取定位中...' });
-
-    try {
-      // 获取精确定位
-      const location = await this.getPreciseLocation();
-      
-      wx.hideLoading();
-
-      if (!location) {
-        wx.showToast({
-          title: '获取定位失败',
-          icon: 'none',
-        });
-        return;
-      }
-
-      wx.showLoading({ title: '签到中...' });
-
-      const res = await request(`/api/course/${this.data.courseId}/checkin/location`, 'POST', {
-        latitude: location.latitude,
-        longitude: location.longitude,
-        accuracy: location.accuracy,
-      });
-
-      wx.hideLoading();
-      wx.showToast({
-        title: '签到成功',
-        icon: 'success',
-      });
-    } catch (error) {
-      wx.hideLoading();
-      
-      if (error.errMsg && error.errMsg.includes('auth deny')) {
-        wx.showModal({
-          title: '需要位置权限',
-          content: '定位签到需要获取您的位置信息，请在设置中开启位置权限',
-          showCancel: false,
-        });
-      } else {
-        wx.showToast({
-          title: error.data?.message || error.message || '签到失败',
-          icon: 'none',
-        });
-      }
     }
   },
 
@@ -253,16 +377,18 @@ Page({
         type: 'gcj02', // 返回可以用于wx.openLocation的经纬度
         altitude: true, // 传入 true 会返回高度信息
         isHighAccuracy: true, // 开启高精度定位
-        highAccuracyExpireTime: 4000, // 高精度定位超时时间
+        highAccuracyExpireTime: 10000, // 高精度定位超时时间10秒
         success: (res) => {
+          console.log('[定位签到] 获取定位成功:', res);
           resolve({
             latitude: res.latitude,
             longitude: res.longitude,
-            accuracy: res.accuracy,
-            altitude: res.altitude,
+            accuracy: res.accuracy || 0,
+            altitude: res.altitude || 0,
           });
         },
         fail: (err) => {
+          console.error('[定位签到] 获取定位失败:', err);
           reject(err);
         },
       });
@@ -297,6 +423,14 @@ Page({
         }
       }
     }, 1000);
+  },
+
+  /** 跳转到签到记录页面 */
+  goToAttendanceRecords() {
+    const { classId, courseId } = this.data;
+    wx.navigateTo({
+      url: `/pages/class/attendance-records/index?classId=${classId}&courseId=${courseId}`,
+    });
   },
 
   onUnload() {
