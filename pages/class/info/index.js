@@ -17,19 +17,19 @@ Page({
   onLoad(options) {
     // 兼容多种入参：classId / id
     const classId = options.classId || options.id;
-    console.log('[课程信息] onLoad, classId:', classId);
+    console.log('[班级信息] onLoad, classId:', classId);
     if (classId) {
       // 云数据库 _id 是字符串，不要 parseInt，否则会变 NaN
       this.setData({ classId: String(classId) });
       this.loadClassInfo(String(classId));
       this.checkAdminStatus(String(classId));
     } else {
-      console.error('[课程信息] 缺少 classId 参数');
-      wx.showToast({ title: '课程id不能为空', icon: 'none' });
+      console.error('[班级信息] 缺少 classId 参数');
+      wx.showToast({ title: '班级id不能为空', icon: 'none' });
     }
   },
 
-  /** 加载课程信息 */
+  /** 加载班级信息 */
   async loadClassInfo(classId) {
     wx.showLoading({ title: '加载中...' });
     try {
@@ -46,7 +46,7 @@ Page({
       }
       
       const classInfo = result.data || {};
-      console.log('[课程信息] 加载成功:', classInfo);
+      console.log('[班级信息] 加载成功:', classInfo);
       this.setData({
         classInfo: {
           id: classInfo.id || classInfo._id,
@@ -63,7 +63,7 @@ Page({
       });
       wx.hideLoading();
     } catch (error) {
-      console.error('[课程信息] 加载失败:', error);
+      console.error('[班级信息] 加载失败:', error);
       wx.hideLoading();
       wx.showToast({
         title: error.data?.message || error.message || '加载失败',
@@ -84,7 +84,7 @@ Page({
       
       const result = res.result || {};
       const isAdmin = result.data?.isAdmin || false;
-      console.log('[课程信息] checkAdminStatus 结果:', { result, isAdmin });
+      console.log('[班级信息] checkAdminStatus 结果:', { result, isAdmin });
       this.setData({ isAdmin });
     } catch (error) {
       console.error('检查管理员状态失败:', error);
@@ -144,7 +144,7 @@ Page({
         semester: editForm.semester.trim(),
         teacherName: editForm.teacherName.trim(),
       };
-      console.log('[课程信息] saveEdit 明文提交:', plainPayload);
+      console.log('[班级信息] saveEdit 明文提交:', plainPayload);
 
       const encryptedData = await encryptFields(
         {
@@ -152,16 +152,16 @@ Page({
         },
         ['teacherName'], // 只加密老师姓名
       );
-      console.log('[课程信息] saveEdit 加密后提交:', encryptedData);
+      console.log('[班级信息] saveEdit 加密后提交:', encryptedData);
       
-      // 调用云函数更新课程信息
+      // 调用云函数更新班级信息
       const res = await wx.cloud.callFunction({
         name: 'updateClass',
         data: encryptedData,
       });
       
       const result = res.result || {};
-      console.log('[课程信息] saveEdit 云函数返回:', result);
+      console.log('[班级信息] saveEdit 云函数返回:', result);
       if (result.code !== 200) {
         throw { message: result.message || '保存失败', data: result };
       }
@@ -172,7 +172,7 @@ Page({
         icon: 'success',
       });
 
-      // 重新加载课程信息
+      // 重新加载班级信息
       await this.loadClassInfo(classId);
       this.setData({
         isEditing: false,
@@ -212,16 +212,16 @@ Page({
     });
   },
 
-  /** 隐藏课程 */
+  /** 隐藏班级 */
   hideClass() {
     const { classId } = this.data;
     
     wx.showModal({
-      title: '隐藏课程',
-      content: '确定要隐藏该课程吗？隐藏后可在"隐藏课程"中查看。',
+      title: '隐藏班级',
+      content: '确定要隐藏该班级吗？隐藏后可在"隐藏班级"中查看。',
       success: (res) => {
         if (res.confirm) {
-          // 获取当前隐藏的课程ID列表
+          // 获取当前隐藏的班级ID列表
           const hiddenClassIds = wx.getStorageSync('hiddenClassIds') || [];
           
           // 如果还没有隐藏，添加到列表
@@ -231,7 +231,7 @@ Page({
           }
           
           wx.showToast({
-            title: '已隐藏课程',
+            title: '已隐藏班级',
             icon: 'success',
           });
           
@@ -243,11 +243,11 @@ Page({
     });
   },
 
-  /** 退出课程 */
+  /** 退出班级 */
   async exitClass() {
     wx.showModal({
-      title: '退出课程',
-      content: '确定要退出该课程吗？',
+      title: '退出班级',
+      content: '确定要退出该班级吗？',
       success: async (res) => {
         if (res.confirm) {
           wx.showLoading({ title: '退出中...' });
@@ -255,7 +255,7 @@ Page({
           try {
             const { classId } = this.data;
             
-            // 调用云函数退出课程
+            // 调用云函数退出班级
             const res = await wx.cloud.callFunction({
               name: 'exitClass',
               data: {
@@ -270,7 +270,7 @@ Page({
             
             wx.hideLoading();
             wx.showToast({
-              title: '已退出课程',
+              title: '已退出班级',
               icon: 'success',
             });
             

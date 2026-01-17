@@ -11,13 +11,13 @@ exports.main = async (event) => {
     const wxContext = cloud.getWXContext();
     const openid = wxContext.OPENID;
     
-    // 从事件中获取课程信息
+    // 从事件中获取班级信息
     const { classId, name, teacherName, semester } = event;
     
     console.log('[updateClass] 请求参数:', { classId, openid, name, semester });
     
     if (!classId) {
-      return { code: 400, success: false, message: '课程ID不能为空' };
+      return { code: 400, success: false, message: '班级ID不能为空' };
     }
     
     // 1. 前端 AES 加密过的 teacherName 统一解密
@@ -49,7 +49,7 @@ exports.main = async (event) => {
       updateData = encryptFieldsForDB(updateData, ['teacherName']);
     }
     
-    // 5. 更新课程信息
+    // 5. 更新班级信息
     console.log('[updateClass] 最终写库 updateData:', updateData);
 
     const updateRes = await courses.doc(classId).update({

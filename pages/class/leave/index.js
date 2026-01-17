@@ -14,7 +14,7 @@ Page({
       this.checkAdminStatus(String(classId));
       this.loadLeaveRequests(String(classId));
     } else {
-      wx.showToast({ title: '课程ID不能为空', icon: 'none' });
+      wx.showToast({ title: '班级ID不能为空', icon: 'none' });
     }
   },
 

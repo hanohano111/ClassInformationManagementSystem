@@ -16,7 +16,7 @@ exports.main = async (event) => {
     const { courseId } = event;
 
     if (!courseId) {
-      return { code: 400, success: false, message: '课程ID不能为空', data: [] };
+      return { code: 400, success: false, message: '班级ID不能为空', data: [] };
     }
 
     // 检查权限：是否为管理员
@@ -37,7 +37,7 @@ exports.main = async (event) => {
           isAdmin = true;
         }
       } catch (e) {
-        console.error('getCheckInRecords 查询课程信息失败:', e);
+        console.error('getCheckInRecords 查询班级信息失败:', e);
       }
     }
 
@@ -54,7 +54,7 @@ exports.main = async (event) => {
 
     const recordsList = [];
 
-    // 获取所有课程成员
+    // 获取所有班级成员
     const allMembersRes = await courseMembers
       .where({
         courseId: courseId,

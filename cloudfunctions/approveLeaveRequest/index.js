@@ -45,7 +45,7 @@ exports.main = async (event) => {
           isAdmin = true;
         }
       } catch (e) {
-        console.error('approveLeaveRequest 查询课程信息失败:', e);
+        console.error('approveLeaveRequest 查询班级信息失败:', e);
       }
     }
 

@@ -27,7 +27,7 @@ Page({
     }
   },
 
-  /** 加载课程信息 */
+  /** 加载班级信息 */
   async loadClassInfo(id) {
     try {
       const res = await wx.cloud.callFunction({
@@ -53,7 +53,7 @@ Page({
         },
       });
     } catch (error) {
-      console.error('加载课程信息失败:', error);
+      console.error('加载班级信息失败:', error);
       wx.showToast({
         title: error.data?.message || error.message || '加载失败',
         icon: 'none',
@@ -82,7 +82,7 @@ Page({
     }
   },
 
-  /** 进入课程信息页面 */
+  /** 进入班级信息页面 */
   goToClassInfo() {
     const classId = this.data.classId || this.data.classInfo?.id;
     wx.navigateTo({
@@ -90,7 +90,7 @@ Page({
     });
   },
 
-  /** 进入课程成员页面 */
+  /** 进入班级成员页面 */
   goToClassMembers() {
     const classId = this.data.classId || this.data.classInfo?.id;
     wx.navigateTo({

@@ -56,10 +56,10 @@ Page({
     wx.showLoading({ title: '创建中...' });
     
     try {
-      // 生成6位随机课程码
+      // 生成6位随机班级码
       const classCode = generateClassCode();
       
-      console.log('[创建课程] 开始创建，参数:', {
+      console.log('[创建班级] 开始创建，参数:', {
         name: name.trim(),
         teacherName: teacherName.trim(),
         semester: semester.trim(),
@@ -77,14 +77,14 @@ Page({
         ['teacherName'], // 只加密老师姓名
       );
       
-      // 调用云函数创建课程
+      // 调用云函数创建班级
       const res = await wx.cloud.callFunction({
         name: 'createClass',
         data: encryptedData,
       });
       
       const result = res.result || {};
-      console.log('[创建课程] 云函数响应:', result);
+      console.log('[创建班级] 云函数响应:', result);
       
       if (result.code !== 200) {
         throw { message: result.message || '创建失败', data: result };
@@ -92,14 +92,14 @@ Page({
       
       wx.hideLoading();
       
-      // 显示课程码
+      // 显示班级码
       wx.showModal({
         title: '创建成功',
-        content: `课程码：${result.data.classCode}\n\n请妥善保管课程码，用于邀请成员加入课程。`,
+        content: `班级码：${result.data.classCode}\n\n请妥善保管班级码，用于邀请成员加入班级。`,
         showCancel: false,
         confirmText: '知道了',
         success: () => {
-          // 返回课程列表页面，触发刷新
+          // 返回班级列表页面，触发刷新
           wx.navigateBack({
             success: () => {
               // 返回后刷新列表
@@ -113,8 +113,8 @@ Page({
         },
       });
     } catch (error) {
-      console.error('[创建课程] 请求失败:', error);
-      console.error('[创建课程] 错误详情:', {
+      console.error('[创建班级] 请求失败:', error);
+      console.error('[创建班级] 错误详情:', {
         message: error.message,
         data: error.data,
         errMsg: error.errMsg,

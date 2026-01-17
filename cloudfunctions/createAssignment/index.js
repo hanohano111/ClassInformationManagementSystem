@@ -15,7 +15,7 @@ exports.main = async (event) => {
     const { classId, title, content, attachments, deadline } = event;
 
     if (!classId) {
-      return { code: 400, success: false, message: '课程ID不能为空' };
+      return { code: 400, success: false, message: '班级ID不能为空' };
     }
     if (!title || !title.trim()) {
       return { code: 400, success: false, message: '作业标题不能为空' };
@@ -38,7 +38,7 @@ exports.main = async (event) => {
           isAdmin = true;
         }
       } catch (e) {
-        console.error('createAssignment 查询课程信息失败:', e);
+        console.error('createAssignment 查询班级信息失败:', e);
       }
     }
 

@@ -61,7 +61,7 @@ exports.main = async (event) => {
           isAdmin = true;
         }
       } catch (e) {
-        console.error('deleteAssignment 查询课程信息失败:', e);
+        console.error('deleteAssignment 查询班级信息失败:', e);
       }
     }
 

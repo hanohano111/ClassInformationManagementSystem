@@ -4,7 +4,7 @@
     <view class="login__header">
       <image class="login__logo" src="/static/icon_wx.png" mode="aspectFit" />
       <view class="login__title">欢迎使用课堂助手</view>
-      <view class="login__subtitle">使用微信一键登录，随时管理你的课程</view>
+      <view class="login__subtitle">使用微信一键登录，随时管理你的班级</view>
     </view>
 
     <view class="login__card">

@@ -9,11 +9,11 @@ exports.main = async (event) => {
     const wxContext = cloud.getWXContext();
     const openid = wxContext.OPENID;
     
-    // 从事件中获取课程ID
+    // 从事件中获取班级ID
     const { classId } = event;
     
     if (!classId) {
-      return { code: 400, success: false, message: '课程ID不能为空' };
+      return { code: 400, success: false, message: '班级ID不能为空' };
     }
     
     // 从 users 集合获取用户信息
@@ -24,7 +24,7 @@ exports.main = async (event) => {
     }
     const userId = userRes.data[0]._id;
     
-    // 查找并删除课程成员记录
+    // 查找并删除班级成员记录
     const memberRes = await courseMembers
       .where({
         courseId: classId,
@@ -33,7 +33,7 @@ exports.main = async (event) => {
       .get();
     
     if (memberRes.data.length === 0) {
-      return { code: 404, success: false, message: '您未加入该课程' };
+      return { code: 404, success: false, message: '您未加入该班级' };
     }
     
     // 删除成员记录

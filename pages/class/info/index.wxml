@@ -1,13 +1,13 @@
-<t-navbar title="课程信息" left-arrow />
+<t-navbar title="班级信息" left-arrow />
 <view class="page class-info page-with-navbar">
   <view class="class-info__content">
     <!-- 查看模式 -->
     <view wx:if="{{!isEditing}}">
       <t-cell-group theme="card">
-        <t-cell title="课程名称" note="{{classInfo.name || '-'}}" />
+        <t-cell title="班级名称" note="{{classInfo.name || '-'}}" />
         <t-cell title="学期" note="{{classInfo.semester || '-'}}" />
         <t-cell title="老师" note="{{classInfo.teacherName || '-'}}" />
-        <t-cell title="课程码" note="{{classInfo.classCode || '-'}}" />
+        <t-cell title="班级码" note="{{classInfo.classCode || '-'}}" />
       </t-cell-group>
 
       <view class="class-info__actions" wx:if="{{isAdmin}}">
@@ -19,10 +19,10 @@
       <!-- 操作按钮 -->
       <view class="class-info__operation-buttons">
         <t-button theme="primary" block bindtap="hideClass" style="margin-bottom: 45rpx;">
-          隐藏课程
+          隐藏班级
         </t-button>
         <t-button theme="danger" block bindtap="exitClass">
-          退出课程
+          退出班级
         </t-button>
       </view>
     </view>
@@ -31,8 +31,8 @@
     <view wx:else>
       <view class="form-item">
         <t-input
-          label="课程名称"
-          placeholder="请输入课程名称"
+          label="班级名称"
+          placeholder="请输入班级名称"
           value="{{editForm.name}}"
             bindchange="onNameInput"
         />

@@ -1,4 +1,4 @@
-<t-navbar title="{{courseInfo.name || '课程详情'}}" left-arrow />
+<t-navbar title="{{courseInfo.name || '班级详情'}}" left-arrow />
 <view class="page course-detail page-with-navbar">
   <view class="course-detail__header">
     <view class="course-info">
@@ -11,7 +11,7 @@
       <t-cell title="签到" arrow bindclick="goToAttendance">
         <t-icon slot="icon" name="check-circle" size="40rpx" color="#0052d9" />
       </t-cell>
-      <t-cell title="课程信息" arrow bindclick="goToClassInfo">
+      <t-cell title="班级信息" arrow bindclick="goToClassInfo">
         <t-icon slot="icon" name="info-circle" size="40rpx" color="#0052d9" />
       </t-cell>
       <t-cell title="通知" arrow bindclick="goToNotices">

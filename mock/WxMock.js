@@ -17,13 +17,13 @@ wx.request = function (config) {
   
   // 如果没有精确匹配，尝试动态路径匹配（如 /api/class/1）
   if (typeof mockKey == 'undefined') {
-      // 检查是否是获取单个课程信息的请求（去除查询参数后匹配）
+      // 检查是否是获取单个班级信息的请求（去除查询参数后匹配）
     if (method === 'GET' && /^\/api\/class\/\d+/.test(urlPath)) {
-      // 直接处理获取单个课程信息的请求（使用去除查询参数后的路径）
+      // 直接处理获取单个班级信息的请求（使用去除查询参数后的路径）
       var match = urlPath.match(/\/api\/class\/(\d+)/);
       if (match) {
         var classId = parseInt(match[1]);
-        // 从全局课程数据库查找课程
+        // 从全局班级数据库查找班级
         var allClasses = wx.getStorageSync('mock_all_classes') || [];
         var foundClass = null;
         for (var i = 0; i < allClasses.length; i++) {
@@ -42,7 +42,7 @@ wx.request = function (config) {
           } : {
             code: 404,
             success: false,
-            message: '课程不存在',
+            message: '班级不存在',
           },
           header: {},
           cookies: [],

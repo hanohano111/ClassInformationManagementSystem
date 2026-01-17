@@ -1,4 +1,4 @@
-# 课程管理 AES 加密说明
+# 班级管理 AES 加密说明
 
 ## 加密流程
 
@@ -9,7 +9,7 @@
 ```javascript
 import { encryptFields } from '~/utils/crypto';
 
-// 创建课程时
+// 创建班级时
 const encryptedData = await encryptFields(
   {
     name: name.trim(),
@@ -87,26 +87,26 @@ return {
 
 | 字段名 | 是否加密 | 说明 |
 |--------|---------|------|
-| name | 否 | 课程名称（公开信息） |
+| name | 否 | 班级名称（公开信息） |
 | teacherName | **是** | 老师姓名（敏感信息） |
 | semester | 否 | 学期信息（公开信息） |
-| classCode | 否 | 课程码（公开信息） |
+| classCode | 否 | 班级码（公开信息） |
 
 ## 涉及的云函数
 
-1. **createClass** - 创建课程
+1. **createClass** - 创建班级
    - 接收：加密的 `teacherName`
    - 存储：加密的 `teacherName` + `teacherName_iv`
 
-2. **getClassDetail** - 获取课程详情
+2. **getClassDetail** - 获取班级详情
    - 读取：加密的 `teacherName` + `teacherName_iv`
    - 返回：解密的 `teacherName`
 
-3. **getClassList** - 获取课程列表
+3. **getClassList** - 获取班级列表
    - 读取：加密的 `teacherName` + `teacherName_iv`
    - 返回：解密的 `teacherName`
 
-4. **updateClass** - 更新课程信息
+4. **updateClass** - 更新班级信息
    - 接收：加密的 `teacherName`
    - 存储：加密的 `teacherName` + `teacherName_iv`
 
@@ -130,4 +130,4 @@ return {
 1. **密钥管理**：所有云函数使用相同的加密密钥（`a9F$3dL!8kPz2xQw`），生产环境建议使用环境变量
 2. **IV 存储**：每个加密字段都有对应的 `_iv` 字段存储初始向量
 3. **解密时机**：只在返回给前端前解密，数据库中的存储始终是密文
-4. **非敏感信息**：课程名称、学期、课程码等公开信息不加密
+4. **非敏感信息**：班级名称、学期、班级码等公开信息不加密

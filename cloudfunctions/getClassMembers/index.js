@@ -12,10 +12,10 @@ exports.main = async (event) => {
     const { classId } = event;
 
     if (!classId) {
-      return { code: 400, success: false, message: '课程ID不能为空', data: [] };
+      return { code: 400, success: false, message: '班级ID不能为空', data: [] };
     }
 
-    // 1. 查课程成员表
+    // 1. 查班级成员表
     const memberRes = await courseMembers
       .where({
         courseId: classId,
@@ -76,7 +76,7 @@ exports.main = async (event) => {
     };
   } catch (e) {
     console.error('getClassMembers error:', e);
-    return { code: 500, success: false, message: '获取课程成员失败', error: e.message, data: [] };
+    return { code: 500, success: false, message: '获取班级成员失败', error: e.message, data: [] };
   }
 };
 

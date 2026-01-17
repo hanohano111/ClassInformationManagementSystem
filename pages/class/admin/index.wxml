@@ -4,13 +4,13 @@
   <view class="admin-settings__section">
     <view class="section-title">功能开关</view>
     <t-cell-group theme="card">
-      <t-cell title="通知功能" label="控制课程通知功能的开启/关闭">
+      <t-cell title="通知功能" label="控制班级通知功能的开启/关闭">
         <t-switch slot="right-icon" value="{{settings.noticeEnabled}}" bindchange="toggleNotice" />
       </t-cell>
-      <t-cell title="作业功能" label="控制课程作业功能的开启/关闭">
+      <t-cell title="作业功能" label="控制班级作业功能的开启/关闭">
         <t-switch slot="right-icon" value="{{settings.assignmentEnabled}}" bindchange="toggleAssignment" />
       </t-cell>
-      <t-cell title="请假申请功能" label="控制课程请假申请功能的开启/关闭">
+      <t-cell title="请假申请功能" label="控制班级请假申请功能的开启/关闭">
         <t-switch slot="right-icon" value="{{settings.leaveEnabled}}" bindchange="toggleLeave" />
       </t-cell>
     </t-cell-group>

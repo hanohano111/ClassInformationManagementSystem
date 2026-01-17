@@ -13,7 +13,7 @@ exports.main = async (event) => {
     const { classId, reason, date, attachments } = event;
 
     if (!classId) {
-      return { code: 400, success: false, message: '课程ID不能为空' };
+      return { code: 400, success: false, message: '班级ID不能为空' };
     }
     if (!reason || !reason.trim()) {
       return { code: 400, success: false, message: '请假原因不能为空' };

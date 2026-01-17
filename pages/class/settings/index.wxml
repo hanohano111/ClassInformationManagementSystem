@@ -1,15 +1,15 @@
-<t-navbar title="课程设置" left-arrow />
+<t-navbar title="班级设置" left-arrow />
 <view class="page class-settings page-with-navbar">
   <view class="settings-content">
     <t-cell-group theme="card">
-      <t-cell title="课程信息" arrow bindclick="editClassInfo" />
+      <t-cell title="班级信息" arrow bindclick="editClassInfo" />
       <t-cell title="成员管理" arrow bindclick="manageMembers" />
       <t-cell title="权限设置" arrow bindclick="permissionSettings" />
     </t-cell-group>
     
     <t-cell-group theme="card" style="margin-top: 24rpx;">
-      <t-cell title="退出课程" arrow bindclick="exitClass" />
-      <t-cell title="解散课程" arrow bindclick="dissolveClass" t-class-title="danger-text" />
+      <t-cell title="退出班级" arrow bindclick="exitClass" />
+      <t-cell title="解散班级" arrow bindclick="dissolveClass" t-class-title="danger-text" />
     </t-cell-group>
   </view>
 </view>

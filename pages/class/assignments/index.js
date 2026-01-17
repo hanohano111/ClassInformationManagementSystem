@@ -19,7 +19,7 @@ Page({
       this.loadAssignments(String(classId));
       this.checkAdminStatus(String(classId));
     } else {
-      wx.showToast({ title: '课程ID不能为空', icon: 'none' });
+      wx.showToast({ title: '班级ID不能为空', icon: 'none' });
     }
 
     // 监听作业提交事件 - 保存绑定后的函数引用以便正确移除

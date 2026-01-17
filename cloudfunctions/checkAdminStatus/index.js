@@ -15,10 +15,10 @@ exports.main = async (event) => {
     console.log('[checkAdminStatus] 请求参数:', { classId, openid });
     
     if (!classId) {
-      return { code: 400, success: false, message: '课程ID不能为空', data: { isAdmin: false } };
+      return { code: 400, success: false, message: '班级ID不能为空', data: { isAdmin: false } };
     }
     
-    // 1. 先看是否在课程成员表中被标记为管理员
+    // 1. 先看是否在班级成员表中被标记为管理员
     const memberRes = await courseMembers
       .where({
         courseId: classId,
@@ -31,11 +31,11 @@ exports.main = async (event) => {
     let isAdmin = memberRes.data.length > 0 && memberRes.data[0].role === 'admin';
     console.log('[checkAdminStatus] 从成员表判断 isAdmin:', isAdmin);
 
-    // 2. 如果不是管理员，再看是否是课程创建者（创建者也视为管理员）
+    // 2. 如果不是管理员，再看是否是班级创建者（创建者也视为管理员）
     if (!isAdmin) {
       try {
         const courseRes = await courses.doc(classId).get();
-        console.log('[checkAdminStatus] 课程查询结果:', { 
+        console.log('[checkAdminStatus] 班级查询结果:', { 
           hasData: !!courseRes.data, 
           creatorOpenid: courseRes.data?.creatorOpenid,
           currentOpenid: openid,
@@ -46,7 +46,7 @@ exports.main = async (event) => {
           console.log('[checkAdminStatus] 通过创建者判断，isAdmin = true');
         }
       } catch (e) {
-        console.error('checkAdminStatus 查询课程信息失败:', e);
+        console.error('checkAdminStatus 查询班级信息失败:', e);
       }
     }
     

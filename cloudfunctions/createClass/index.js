@@ -17,16 +17,16 @@ exports.main = async (event) => {
     
     // 基本校验
     if (!name || !name.trim()) {
-      return { code: 400, success: false, message: '课程名称不能为空' };
+      return { code: 400, success: false, message: '班级名称不能为空' };
     }
     if (!classCode || !classCode.trim()) {
-      return { code: 400, success: false, message: '课程码不能为空' };
+      return { code: 400, success: false, message: '班级码不能为空' };
     }
     
-    // 检查课程码是否已存在
+    // 检查班级码是否已存在
     const existCourse = await courses.where({ classCode: classCode.trim() }).get();
     if (existCourse.data.length > 0) {
-      return { code: 400, success: false, message: '课程码已存在，请重新生成' };
+      return { code: 400, success: false, message: '班级码已存在，请重新生成' };
     }
     
     // 从 users 集合获取用户信息
@@ -37,7 +37,7 @@ exports.main = async (event) => {
     }
     const userId = userRes.data[0]._id;
     
-    // 2. 创建课程数据
+    // 2. 创建班级数据
     let courseData = {
       name: name.trim(),
       teacherName: teacherName ? teacherName.trim() : '',
@@ -56,7 +56,7 @@ exports.main = async (event) => {
     const addRes = await courses.add({ data: courseData });
     const courseId = addRes._id;
     
-    // 将创建者添加为课程成员（管理员）
+    // 将创建者添加为班级成员（管理员）
     await courseMembers.add({
       data: {
         courseId: courseId,

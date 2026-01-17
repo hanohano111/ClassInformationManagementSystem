@@ -12,7 +12,7 @@ exports.main = async (event) => {
     const { classId } = event;
 
     if (!classId) {
-      return { code: 400, success: false, message: '课程ID不能为空', data: [] };
+      return { code: 400, success: false, message: '班级ID不能为空', data: [] };
     }
 
     const noticeRes = await notices

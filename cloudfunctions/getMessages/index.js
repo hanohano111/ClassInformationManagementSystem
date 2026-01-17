@@ -17,7 +17,7 @@ exports.main = async (event) => {
     const wxContext = cloud.getWXContext();
     const openid = wxContext.OPENID;
 
-    // 获取用户加入的所有课程
+    // 获取用户加入的所有班级
     const memberRes = await courseMembers.where({ openid }).get();
     if (memberRes.data.length === 0) {
       return { code: 200, success: true, data: [] };
@@ -29,7 +29,7 @@ exports.main = async (event) => {
       memberMap[m.courseId] = m;
     });
 
-    // 获取课程信息
+    // 获取班级信息
     const coursePromises = courseIds.map(courseId => courses.doc(courseId).get());
     const courseResults = await Promise.all(coursePromises);
     const courseMap = {};
@@ -43,7 +43,7 @@ exports.main = async (event) => {
     const now = Date.now();
     const oneWeekAgo = now - 7 * 24 * 60 * 60 * 1000; // 最近一周的消息
 
-    // 遍历每个课程
+    // 遍历每个班级
     for (const courseId of courseIds) {
       const course = courseMap[courseId];
       if (!course) continue;
@@ -53,7 +53,7 @@ exports.main = async (event) => {
 
       // 管理员消息：作业通知 - 显示当前用户的提交状态（不再显示其他成员的提交情况）
       if (isAdmin) {
-        // 获取该课程的所有作业
+        // 获取该班级的所有作业
         const assignmentRes = await assignments
           .where({ courseId })
           .orderBy('createdAt', 'desc')
@@ -75,7 +75,7 @@ exports.main = async (event) => {
           messages.push({
             type: 'assignment_notice',
             courseId: courseId,
-            courseName: course.name || '未知课程',
+            courseName: course.name || '未知班级',
             title: `作业：${assignment.title}`,
             content: `状态：${statusText}`, // 只显示当前用户的提交状态
             timestamp: assignment.createdAt,
@@ -97,7 +97,7 @@ exports.main = async (event) => {
           messages.push({
             type: 'checkin',
             courseId: courseId,
-            courseName: course.name || '未知课程',
+            courseName: course.name || '未知班级',
             title: '签到情况',
             content: codeData.note || `签到码：${codeData.code}`,
             timestamp: codeData.createdAt,
@@ -119,7 +119,7 @@ exports.main = async (event) => {
           messages.push({
             type: 'leave_request',
             courseId: courseId,
-            courseName: course.name || '未知课程',
+            courseName: course.name || '未知班级',
             title: `请假申请：${leave.reason || '未填写原因'}`,
             content: `${leave.studentName || '未知用户'} 申请请假`,
             timestamp: leave.createdAt,
@@ -153,7 +153,7 @@ exports.main = async (event) => {
           messages.push({
             type: 'checkin_notice',
             courseId: courseId,
-            courseName: course.name || '未知课程',
+            courseName: course.name || '未知班级',
             title: '签到通知',
             content: codeData.note || `签到码：${codeData.code}`,
             timestamp: codeData.createdAt,
@@ -176,7 +176,7 @@ exports.main = async (event) => {
         messages.push({
           type: 'notice',
           courseId: courseId,
-          courseName: course.name || '未知课程',
+          courseName: course.name || '未知班级',
           title: notice.title || '通知',
           content: notice.content || '',
           timestamp: notice.createdAt,
@@ -210,7 +210,7 @@ exports.main = async (event) => {
         messages.push({
           type: 'assignment_notice',
           courseId: courseId,
-          courseName: course.name || '未知课程',
+          courseName: course.name || '未知班级',
           title: `作业：${assignment.title}`,
           content: `状态：${statusText}`, // 只显示当前用户的提交状态
           timestamp: assignment.createdAt,

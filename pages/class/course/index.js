@@ -31,25 +31,25 @@ Page({
     }
   },
 
-  /** 加载课程信息 */
+  /** 加载班级信息 */
   async loadClassInfo(classId) {
     try {
       const res = await request(`/api/class/${classId}`, 'GET');
       const classInfo = res.data?.data || res.data || {};
       this.setData({ classInfo });
     } catch (error) {
-      console.error('加载课程信息失败:', error);
+      console.error('加载班级信息失败:', error);
     }
   },
 
-  /** 加载课程信息 */
+  /** 加载班级信息 */
   async loadCourseInfo(courseId) {
     try {
       const res = await request(`/api/course/${courseId}`, 'GET');
       const courseInfo = res.data?.data || res.data || {};
       this.setData({ courseInfo });
     } catch (error) {
-      console.error('加载课程信息失败:', error);
+      console.error('加载班级信息失败:', error);
     }
   },
 
@@ -74,7 +74,7 @@ Page({
     });
   },
 
-  /** 进入课程信息页面 */
+  /** 进入班级信息页面 */
   goToClassInfo() {
     const classId = this.data.classId;
     wx.navigateTo({

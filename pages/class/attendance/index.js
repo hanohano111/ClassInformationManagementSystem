@@ -33,7 +33,7 @@ Page({
     }
   },
 
-  /** 加载课程信息 */
+  /** 加载班级信息 */
   async loadClassInfo(classId) {
     try {
       const res = await wx.cloud.callFunction({
@@ -61,12 +61,12 @@ Page({
       
       // 设置导航栏标题
       wx.setNavigationBarTitle({
-        title: `签到 - ${classInfo.name || '课程'}`,
+        title: `签到 - ${classInfo.name || '班级'}`,
       });
     } catch (error) {
-      console.error('加载课程信息失败:', error);
+      console.error('加载班级信息失败:', error);
       wx.setNavigationBarTitle({
-        title: '签到 - 课程',
+        title: '签到 - 班级',
       });
     }
   },

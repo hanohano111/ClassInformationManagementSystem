@@ -14,7 +14,7 @@ exports.main = async (event) => {
     const { courseId, code, expireTime, note } = event;
 
     if (!courseId) {
-      return { code: 400, success: false, message: '课程ID不能为空' };
+      return { code: 400, success: false, message: '班级ID不能为空' };
     }
     if (!code) {
       return { code: 400, success: false, message: '签到码不能为空' };
@@ -37,7 +37,7 @@ exports.main = async (event) => {
           isAdmin = true;
         }
       } catch (e) {
-        console.error('generateCheckInCode 查询课程信息失败:', e);
+        console.error('generateCheckInCode 查询班级信息失败:', e);
       }
     }
 

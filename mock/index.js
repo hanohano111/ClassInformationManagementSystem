@@ -7,13 +7,13 @@ import dataCenter from './dataCenter/index';
 import my from './my/index';
 import classMock from './class/index';
 
-// ========== 全局课程数据库（所有课程） ==========
-// 获取全局课程数据库
+// ========== 全局班级数据库（所有班级） ==========
+// 获取全局班级数据库
 function getAllClasses() {
   return wx.getStorageSync('mock_all_classes') || [];
 }
 
-// 添加课程到全局数据库
+// 添加班级到全局数据库
 function addClassToGlobal(classData) {
   const allClasses = getAllClasses();
   const nextId = wx.getStorageSync('mock_global_class_id_counter') || 1;
@@ -27,43 +27,43 @@ function addClassToGlobal(classData) {
   wx.setStorageSync('mock_all_classes', allClasses);
   wx.setStorageSync('mock_global_class_id_counter', nextId + 1);
   
-  console.log('[创建课程] 已保存到全局数据库:', {
+  console.log('[创建班级] 已保存到全局数据库:', {
     id: newClass.id,
     name: newClass.name,
     classCode: newClass.classCode,
     creatorId: newClass.creatorId,
   });
-  console.log('[创建课程] 当前全局数据库中的课程数量:', allClasses.length);
+  console.log('[创建班级] 当前全局数据库中的班级数量:', allClasses.length);
   
   return newClass;
 }
 
-// 根据ID从全局数据库获取课程
+// 根据ID从全局数据库获取班级
 function getClassById(classId) {
   const allClasses = getAllClasses();
   return allClasses.find(cls => cls.id === classId) || null;
 }
 
-// 根据课程码从全局数据库查找课程
+// 根据班级码从全局数据库查找班级
 function findClassByCode(classCode) {
   const allClasses = getAllClasses();
-  console.log('[查找课程] 课程码:', classCode);
-  console.log('[查找课程] 全局数据库中的课程数量:', allClasses.length);
-  console.log('[查找课程] 全局数据库中的课程:', allClasses.map(c => ({ id: c.id, name: c.name, classCode: c.classCode })));
+  console.log('[查找班级] 班级码:', classCode);
+  console.log('[查找班级] 全局数据库中的班级数量:', allClasses.length);
+  console.log('[查找班级] 全局数据库中的班级:', allClasses.map(c => ({ id: c.id, name: c.name, classCode: c.classCode })));
   const found = allClasses.find(cls => cls.classCode === classCode) || null;
-  console.log('[查找课程] 查找结果:', found ? { id: found.id, name: found.name } : '未找到');
+  console.log('[查找班级] 查找结果:', found ? { id: found.id, name: found.name } : '未找到');
   return found;
 }
 
-// ========== 用户课程列表（只存储课程ID） ==========
-// 获取用户的课程ID列表
+// ========== 用户班级列表（只存储班级ID） ==========
+// 获取用户的班级ID列表
 function getUserClassIds(userId) {
   if (!userId) return [];
   const key = `mock_user_classes_${userId}`;
   return wx.getStorageSync(key) || [];
 }
 
-// 添加课程ID到用户的课程列表
+// 添加班级ID到用户的班级列表
 function addClassIdToUser(userId, classId) {
   if (!userId) return false;
   
@@ -80,7 +80,7 @@ function addClassIdToUser(userId, classId) {
   return true;
 }
 
-// 从用户的课程列表中删除课程ID
+// 从用户的班级列表中删除班级ID
 function removeClassIdFromUser(userId, classId) {
   if (!userId) return false;
   
@@ -97,17 +97,17 @@ function removeClassIdFromUser(userId, classId) {
   return true;
 }
 
-// 获取用户的完整课程列表（根据ID从全局数据库获取详细信息）
+// 获取用户的完整班级列表（根据ID从全局数据库获取详细信息）
 function getUserClassList(userId) {
   if (!userId) return [];
   
   const classIds = getUserClassIds(userId);
   const allClasses = getAllClasses();
   
-  // 根据ID从全局数据库获取课程详细信息
+  // 根据ID从全局数据库获取班级详细信息
   return classIds
     .map(id => allClasses.find(cls => cls.id === id))
-    .filter(cls => cls !== undefined); // 过滤掉不存在的课程
+    .filter(cls => cls !== undefined); // 过滤掉不存在的班级
 }
 
 export default () => {
@@ -117,7 +117,7 @@ export default () => {
     // 支持指定 method，如果不指定则匹配所有方法
     const mockPath = item.method ? `${item.method} ${item.path}` : item.path;
     
-    // 对于创建课程接口，使用函数形式保存并返回
+    // 对于创建班级接口，使用函数形式保存并返回
     if (item.path === '/api/class/create' && item.method === 'POST') {
       Mock.mock(mockPath, function(options) {
         // 从请求数据中获取信息
@@ -126,15 +126,15 @@ export default () => {
         // 从请求头或数据中获取用户ID
         const userId = requestData.userId || wx.getStorageSync('userId') || 'default';
         
-        console.log('[创建课程] 当前用户ID:', userId);
-        console.log('[创建课程] 课程信息:', {
+        console.log('[创建班级] 当前用户ID:', userId);
+        console.log('[创建班级] 班级信息:', {
           name: requestData.name,
           teacherName: requestData.teacherName,
           semester: requestData.semester,
           classCode: requestData.classCode,
         });
         
-        // 1. 创建新课程并保存到全局课程数据库
+        // 1. 创建新班级并保存到全局班级数据库
         const newClass = addClassToGlobal({
           name: requestData.name,
           teacherName: requestData.teacherName,
@@ -143,7 +143,7 @@ export default () => {
           creatorId: userId, // 记录创建者ID
         });
         
-        // 2. 将课程ID添加到用户的课程列表
+        // 2. 将班级ID添加到用户的班级列表
         addClassIdToUser(userId, newClass.id);
         
         return {
@@ -157,7 +157,7 @@ export default () => {
         };
       });
     }
-    // 对于加入课程接口
+    // 对于加入班级接口
     else if (item.path === '/api/class/join' && item.method === 'POST') {
       Mock.mock(mockPath, function(options) {
         const requestData = JSON.parse(options.body || '{}');
@@ -166,23 +166,23 @@ export default () => {
         // 从请求头或数据中获取用户ID
         const userId = requestData.userId || wx.getStorageSync('userId') || 'default';
         
-        // 从全局课程数据库查找课程（通过课程码匹配）
-        console.log('[加入课程] 当前用户ID:', userId);
-        console.log('[加入课程] 查找课程码:', classCode);
+        // 从全局班级数据库查找班级（通过班级码匹配）
+        console.log('[加入班级] 当前用户ID:', userId);
+        console.log('[加入班级] 查找班级码:', classCode);
         const foundClass = findClassByCode(classCode);
         
         if (foundClass) {
-          // 检查用户是否已经加入过该课程
+          // 检查用户是否已经加入过该班级
           const userClassIds = getUserClassIds(userId);
           if (userClassIds.includes(foundClass.id)) {
             return {
               code: 400,
               success: false,
-              message: '您已加入该课程',
+              message: '您已加入该班级',
             };
           }
           
-          // 将课程ID添加到用户的课程列表（课程已在全局数据库中）
+          // 将班级ID添加到用户的班级列表（班级已在全局数据库中）
           addClassIdToUser(userId, foundClass.id);
           
           return {
@@ -195,22 +195,22 @@ export default () => {
             },
           };
         } else {
-          // 课程码在全局数据库中不存在
+          // 班级码在全局数据库中不存在
           return {
             code: 404,
             success: false,
-            message: '不存在该课程',
+            message: '不存在该班级',
           };
         }
       });
     }
-    // 对于获取课程列表接口，从用户的课程ID列表获取，然后从全局数据库获取详细信息
+    // 对于获取班级列表接口，从用户的班级ID列表获取，然后从全局数据库获取详细信息
     else if (item.path === '/api/class/list' && item.method === 'GET') {
       Mock.mock(mockPath, function(options) {
         // 从请求参数或本地存储获取用户ID
         const userId = options.urlParams?.userId || options.data?.userId || wx.getStorageSync('userId') || 'default';
         
-        // 获取该用户的完整课程列表（根据ID从全局数据库获取详细信息）
+        // 获取该用户的完整班级列表（根据ID从全局数据库获取详细信息）
         const classList = getUserClassList(userId);
         
         return {
@@ -221,7 +221,7 @@ export default () => {
       });
     }
     
-    // 对于退出课程接口
+    // 对于退出班级接口
     else if (item.path === '/api/class/exit' && item.method === 'POST') {
       Mock.mock(mockPath, function(options) {
         const requestData = JSON.parse(options.body || '{}');
@@ -230,7 +230,7 @@ export default () => {
         // 从请求头或数据中获取用户ID
         const userId = requestData.userId || wx.getStorageSync('userId') || 'default';
         
-        // 从用户的课程列表中删除课程ID（不删除全局数据库中的课程）
+        // 从用户的班级列表中删除班级ID（不删除全局数据库中的班级）
         const removed = removeClassIdFromUser(userId, classId);
         
         if (removed) {
@@ -243,7 +243,7 @@ export default () => {
           return {
             code: 404,
             success: false,
-            message: '课程不存在或已退出',
+            message: '班级不存在或已退出',
           };
         }
       });
@@ -254,6 +254,6 @@ export default () => {
     }
   });
 
-  // 添加获取单个课程信息的接口（使用函数形式处理动态路径）
+  // 添加获取单个班级信息的接口（使用函数形式处理动态路径）
   // 注意：Mock.js 不支持正则表达式作为 key，所以我们在 WxMock.js 中处理
 };

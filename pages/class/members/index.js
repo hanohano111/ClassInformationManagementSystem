@@ -12,14 +12,14 @@ Page({
 
   onLoad(options) {
     const classId = options.classId || options.id;
-    console.log('[课程成员] onLoad, classId:', classId);
+    console.log('[班级成员] onLoad, classId:', classId);
     if (classId) {
       this.setData({ classId: String(classId) });
       this.loadClassMembers(String(classId));
       this.checkAdminStatus(String(classId));
     } else {
-      console.error('[课程成员] 缺少 classId 参数');
-      wx.showToast({ title: '课程id不能为空', icon: 'none' });
+      console.error('[班级成员] 缺少 classId 参数');
+      wx.showToast({ title: '班级id不能为空', icon: 'none' });
     }
   },
 
@@ -39,7 +39,7 @@ Page({
     }
   },
 
-  /** 加载课程成员列表 */
+  /** 加载班级成员列表 */
   async loadClassMembers(classId) {
     wx.showLoading({ title: '加载中...' });
     try {
@@ -59,10 +59,10 @@ Page({
       this.setData({
         memberList: members,
       });
-      console.log('[课程成员] 加载成功:', members);
+      console.log('[班级成员] 加载成功:', members);
       wx.hideLoading();
     } catch (error) {
-      console.error('[课程成员] 加载失败:', error);
+      console.error('[班级成员] 加载失败:', error);
       wx.hideLoading();
       wx.showToast({
         title: error.data?.message || error.message || '加载成员失败',

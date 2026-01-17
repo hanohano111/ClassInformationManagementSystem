@@ -12,7 +12,7 @@ exports.main = async (event) => {
     const { courseId } = event;
 
     if (!courseId) {
-      return { code: 400, success: false, message: '课程ID不能为空' };
+      return { code: 400, success: false, message: '班级ID不能为空' };
     }
 
     // 查询当前有效的签到码

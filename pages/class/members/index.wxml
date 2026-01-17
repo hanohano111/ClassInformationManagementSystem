@@ -1,4 +1,4 @@
-<t-navbar title="课程成员" left-arrow />
+<t-navbar title="班级成员" left-arrow />
 <view class="page class-members page-with-navbar">
   <view class="class-members__content">
     <!-- 管理员：添加成员按钮 -->
@@ -9,7 +9,7 @@
     </view>
 
     <t-cell-group theme="card">
-      <t-cell title="课程成员" note="{{memberList.length}}人" />
+      <t-cell title="班级成员" note="{{memberList.length}}人" />
       <block wx:for="{{memberList}}" wx:for-item="item" wx:key="userId">
         <t-cell
           title="{{item.name || '未设置名称'}}"
@@ -36,7 +36,7 @@
             maxlength="20"
           />
         </view>
-        <view class="form-tip">通过学号搜索并添加成员到课程</view>
+        <view class="form-tip">通过学号搜索并添加成员到班级</view>
         <view class="add-member-popup__actions">
           <t-button theme="default" block bindtap="closeAddMemberPopup" style="margin-bottom: 16rpx;">
             取消

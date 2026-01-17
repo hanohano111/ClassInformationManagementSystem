@@ -1,12 +1,12 @@
-<t-navbar title="{{classInfo.name || '课程详情'}}" left-arrow />
+<t-navbar title="{{classInfo.name || '班级详情'}}" left-arrow />
 <view class="page class-detail page-with-navbar">
   <!-- 功能列表 -->
   <view class="class-detail__content">
     <t-cell-group theme="card">
-      <t-cell title="课程信息" arrow bindclick="goToClassInfo">
+      <t-cell title="班级信息" arrow bindclick="goToClassInfo">
         <t-icon slot="icon" name="info-circle" size="40rpx" color="#0052d9" />
       </t-cell>
-      <t-cell title="课程成员" arrow bindclick="goToClassMembers">
+      <t-cell title="班级成员" arrow bindclick="goToClassMembers">
         <t-icon slot="icon" name="user" size="40rpx" color="#0052d9" />
       </t-cell>
       <t-cell title="签到" arrow bindclick="goToAttendance">
@@ -23,21 +23,21 @@
       </t-cell>
     </t-cell-group>
 
-    <!-- 课程信息展开内容 -->
+    <!-- 班级信息展开内容 -->
     <view class="class-info-expand" wx:if="{{showClassInfo}}">
       <t-cell-group theme="card">
         <t-cell title="学期" label="{{classInfo.semester || '-'}}" />
         <t-cell title="老师" label="{{classInfo.teacherName || '-'}}" />
-        <t-cell title="课程码" label="{{classInfo.classCode || '-'}}" />
+        <t-cell title="班级码" label="{{classInfo.classCode || '-'}}" />
       </t-cell-group>
       
       <!-- 操作按钮 -->
       <view class="class-info-buttons">
         <t-button theme="primary" block bindtap="hideClass" style="margin-bottom: 16rpx;">
-          隐藏课程
+          隐藏班级
         </t-button>
         <t-button theme="danger" block bindtap="exitClass">
-          退出课程
+          退出班级
         </t-button>
       </view>
     </view>

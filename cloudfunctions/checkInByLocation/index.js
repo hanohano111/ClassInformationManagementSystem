@@ -13,7 +13,7 @@ exports.main = async (event) => {
     const { courseId, latitude, longitude, accuracy } = event;
 
     if (!courseId) {
-      return { code: 400, success: false, message: '课程ID不能为空' };
+      return { code: 400, success: false, message: '班级ID不能为空' };
     }
     if (!latitude || !longitude) {
       return { code: 400, success: false, message: '定位信息不能为空' };

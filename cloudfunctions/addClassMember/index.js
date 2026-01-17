@@ -15,7 +15,7 @@ exports.main = async (event) => {
     const { classId, classCode, studentNo } = event;
 
     if (!classId) {
-      return { code: 400, success: false, message: '课程ID不能为空' };
+      return { code: 400, success: false, message: '班级ID不能为空' };
     }
 
     // 检查权限：是否为管理员
@@ -35,7 +35,7 @@ exports.main = async (event) => {
           isAdmin = true;
         }
       } catch (e) {
-        console.error('addClassMember 查询课程信息失败:', e);
+        console.error('addClassMember 查询班级信息失败:', e);
       }
     }
 
@@ -45,17 +45,17 @@ exports.main = async (event) => {
 
     let targetUser = null;
 
-    // 通过课程码添加
+    // 通过班级码添加
     if (classCode) {
       const courseRes = await courses.where({ classCode: classCode.trim() }).get();
       if (courseRes.data.length === 0) {
-        return { code: 404, success: false, message: '课程码不存在' };
+        return { code: 404, success: false, message: '班级码不存在' };
       }
       const targetCourseId = courseRes.data[0]._id;
-      // 获取该课程的所有成员
+      // 获取该班级的所有成员
       const targetMembers = await courseMembers.where({ courseId: targetCourseId }).get();
       // 这里简化处理，实际可能需要更复杂的逻辑
-      return { code: 400, success: false, message: '暂不支持通过课程码批量添加成员' };
+      return { code: 400, success: false, message: '暂不支持通过班级码批量添加成员' };
     }
 
     // 通过学号添加
@@ -79,7 +79,7 @@ exports.main = async (event) => {
         return { code: 404, success: false, message: '未找到该学号对应的用户' };
       }
 
-      // 检查用户是否已经是课程成员
+      // 检查用户是否已经是班级成员
       const existingMember = await courseMembers
         .where({
           courseId: classId,
@@ -88,10 +88,10 @@ exports.main = async (event) => {
         .get();
 
       if (existingMember.data.length > 0) {
-        return { code: 400, success: false, message: '该用户已经是课程成员' };
+        return { code: 400, success: false, message: '该用户已经是班级成员' };
       }
 
-      // 添加为课程成员
+      // 添加为班级成员
       await courseMembers.add({
         data: {
           courseId: classId,

@@ -8,15 +8,15 @@ Page({
     hasVisibleClasses: true, // 是否有可见的班级
     classSidebar: [
       {
-        title: '进入课程',
+        title: '进入班级',
         type: 'enter',
       },
       {
-        title: '创建课程',
+        title: '创建班级',
         type: 'create',
       },
       {
-        title: '隐藏课程',
+        title: '隐藏班级',
         type: 'hidden',
       },
     ],
@@ -30,13 +30,13 @@ Page({
     this.loadClassList();
   },
 
-  /** 加载课程列表 */
+  /** 加载班级列表 */
   async loadClassList() {
     try {
-      // 从本地存储获取隐藏的课程ID列表
+      // 从本地存储获取隐藏的班级ID列表
       const hiddenClassIds = wx.getStorageSync('hiddenClassIds') || [];
       
-      // 调用云函数获取课程列表
+      // 调用云函数获取班级列表
       const res = await wx.cloud.callFunction({
         name: 'getClassList',
       });
@@ -44,7 +44,7 @@ Page({
       const result = res.result || {};
       const classList = result.data || [];
       
-      // 计算是否有可见的课程
+      // 计算是否有可见的班级
       const hasVisibleClasses = classList.some(item => !hiddenClassIds.includes(item.id));
       
       this.setData({
@@ -53,7 +53,7 @@ Page({
         hasVisibleClasses,
       });
     } catch (error) {
-      console.error('加载课程列表失败:', error);
+      console.error('加载班级列表失败:', error);
       // 如果接口失败，使用空列表
     this.setData({
         classList: [],
@@ -62,7 +62,7 @@ Page({
     }
   },
 
-  /** 进入课程 */
+  /** 进入班级 */
   enterClass(e) {
     const { id } = e.currentTarget.dataset;
     wx.navigateTo({
@@ -88,20 +88,20 @@ Page({
     }
   },
 
-  /** 显示进入课程对话框 */
+  /** 显示进入班级对话框 */
   showEnterClassDialog() {
     wx.showModal({
-      title: '加入课程',
+      title: '加入班级',
       editable: true,
-      placeholderText: '请输入6位课程码',
+      placeholderText: '请输入6位班级码',
       success: async (res) => {
         if (res.confirm && res.content) {
           const classCode = res.content.trim().toUpperCase();
           
-          // 验证课程码格式（6位数字+大写英文）
+          // 验证班级码格式（6位数字+大写英文）
           if (!/^[0-9A-Z]{6}$/.test(classCode)) {
             wx.showToast({
-              title: '课程码格式不正确',
+              title: '班级码格式不正确',
               icon: 'none',
             });
             return;
@@ -113,12 +113,12 @@ Page({
     });
   },
 
-  /** 加入课程 */
+  /** 加入班级 */
   async joinClass(classCode) {
     wx.showLoading({ title: '加入中...' });
     
     try {
-      // 调用云函数加入课程
+      // 调用云函数加入班级
       const res = await wx.cloud.callFunction({
         name: 'joinClass',
         data: {
@@ -139,7 +139,7 @@ Page({
         icon: 'success',
       });
       
-      // 立即刷新课程列表
+      // 立即刷新班级列表
       await this.loadClassList();
     } catch (error) {
       wx.hideLoading();
@@ -151,26 +151,26 @@ Page({
     }
   },
 
-  /** 显示隐藏的课程 */
+  /** 显示隐藏的班级 */
   showHiddenClasses() {
     const { classList, hiddenClassIds } = this.data;
     
-    // 获取所有隐藏的课程
+    // 获取所有隐藏的班级
     const hiddenClasses = classList.filter(cls => hiddenClassIds.includes(cls.id));
     
     if (hiddenClasses.length === 0) {
       wx.showToast({
-        title: '暂无隐藏的课程',
+        title: '暂无隐藏的班级',
         icon: 'none',
       });
       return;
     }
     
-    // 显示隐藏的课程列表，让用户选择显示
+    // 显示隐藏的班级列表，让用户选择显示
     const itemNames = hiddenClasses.map(cls => cls.name);
     
     wx.showActionSheet({
-      title: '选择要显示的课程',
+      title: '选择要显示的班级',
       itemList: itemNames,
       success: (res) => {
         const selectedClass = hiddenClasses[res.tapIndex];
@@ -179,24 +179,24 @@ Page({
     });
   },
 
-  /** 切换课程显示/隐藏 */
+  /** 切换班级显示/隐藏 */
   toggleClassVisibility(classId, hide) {
     let { hiddenClassIds, classList } = this.data;
     
     if (hide) {
-      // 隐藏课程
+      // 隐藏班级
       if (!hiddenClassIds.includes(classId)) {
         hiddenClassIds.push(classId);
       }
     } else {
-      // 显示课程
+      // 显示班级
       hiddenClassIds = hiddenClassIds.filter(id => id !== classId);
     }
     
     // 保存到本地存储
     wx.setStorageSync('hiddenClassIds', hiddenClassIds);
     
-    // 计算是否有可见的课程
+    // 计算是否有可见的班级
     const hasVisibleClasses = classList.some(item => !hiddenClassIds.includes(item.id));
     
     this.setData({

@@ -10,18 +10,18 @@ exports.main = async (event) => {
     const wxContext = cloud.getWXContext();
     const openid = wxContext.OPENID;
     
-    // 从事件中获取课程ID
+    // 从事件中获取班级ID
     const { classId } = event;
     
     if (!classId) {
-      return { code: 400, success: false, message: '课程ID不能为空' };
+      return { code: 400, success: false, message: '班级ID不能为空' };
     }
     
-    // 获取课程信息
+    // 获取班级信息
     const courseRes = await courses.doc(classId).get();
     
     if (!courseRes.data) {
-      return { code: 404, success: false, message: '课程不存在' };
+      return { code: 404, success: false, message: '班级不存在' };
     }
     
     // 从数据库读取后，解密敏感字段（teacherName）
@@ -38,6 +38,6 @@ exports.main = async (event) => {
     };
   } catch (e) {
     console.error('getClassDetail error:', e);
-    return { code: 500, success: false, message: '获取课程详情失败', error: e.message };
+    return { code: 500, success: false, message: '获取班级详情失败', error: e.message };
   }
 };

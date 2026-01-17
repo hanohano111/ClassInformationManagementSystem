@@ -18,7 +18,7 @@ exports.main = async (event) => {
     }
     const userId = userRes.data[0]._id;
     
-    // 获取用户加入的所有课程ID
+    // 获取用户加入的所有班级ID
     const memberRes = await courseMembers.where({ openid }).get();
     const courseIds = memberRes.data.map(m => m.courseId);
     
@@ -26,7 +26,7 @@ exports.main = async (event) => {
       return { code: 200, success: true, data: [] };
     }
     
-    // 根据课程ID获取课程详细信息
+    // 根据班级ID获取班级详细信息
     const courses = db.collection('courses');
     const courseList = [];
     
@@ -58,6 +58,6 @@ exports.main = async (event) => {
     };
   } catch (e) {
     console.error('getClassList error:', e);
-    return { code: 500, success: false, message: '获取课程列表失败', error: e.message, data: [] };
+    return { code: 500, success: false, message: '获取班级列表失败', error: e.message, data: [] };
   }
 };

@@ -5,7 +5,7 @@
   module.exports.isVisible = isVisible;
 </wxs>
 
-<nav nav-type="title" title-text="课程" sidebar="{{classSidebar}}" drawer-title="课程" bind:sidebar-click="onSidebarClick"></nav>
+<nav nav-type="title" title-text="班级" sidebar="{{classSidebar}}" drawer-title="班级" bind:sidebar-click="onSidebarClick"></nav>
 <view class="class-container">
   <view class="class-list">
     <view 
@@ -26,7 +26,7 @@
       <t-icon name="chevron-right" size="32rpx" color="#999" />
     </view>
     <view class="class-empty" wx:if="{{!hasVisibleClasses}}">
-      <t-empty description="暂无课程" />
+      <t-empty description="暂无班级" />
     </view>
   </view>
 </view>

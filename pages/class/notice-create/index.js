@@ -16,7 +16,7 @@ Page({
     if (classId) {
       this.setData({ classId: String(classId) });
     } else {
-      wx.showToast({ title: '课程ID不能为空', icon: 'none' });
+      wx.showToast({ title: '班级ID不能为空', icon: 'none' });
       setTimeout(() => {
         wx.navigateBack();
       }, 1500);

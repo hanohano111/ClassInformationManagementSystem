@@ -25,7 +25,7 @@
           <text class="message-item__content" wx:if="{{item.content}}">{{item.content}}</text>
         </view>
         <view class="message-item__actions">
-          <view class="action-btn action-btn--unarchive" bindtap="onUnarchive" data-index="{{index}}" catchtap="true">
+          <view class="action-btn action-btn--unarchive" catchtap="onUnarchive" data-index="{{index}}">
             <t-icon name="folder-delete" size="32rpx" color="#fff" />
             <text>取消归档</text>
           </view>

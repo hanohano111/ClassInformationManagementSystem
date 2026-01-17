@@ -44,7 +44,7 @@ exports.main = async (event) => {
           isAdmin = true;
         }
       } catch (e) {
-        console.error('getAssignmentDetail 查询课程信息失败:', e);
+        console.error('getAssignmentDetail 查询班级信息失败:', e);
       }
     }
 
@@ -60,7 +60,7 @@ exports.main = async (event) => {
 
     // 如果是管理员，获取所有成员的提交情况
     if (isAdmin) {
-      // 获取所有课程成员
+      // 获取所有班级成员
       const allMembersRes = await courseMembers
         .where({
           courseId: assignmentData.courseId,
