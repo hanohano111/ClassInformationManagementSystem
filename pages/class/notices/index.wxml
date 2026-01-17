@@ -10,27 +10,43 @@
 
     <!-- 通知列表 -->
     <view class="notices__list" wx:if="{{noticeList.length > 0}}">
-      <t-cell-group theme="card">
-        <block wx:for="{{noticeList}}" wx:for-item="item" wx:key="id">
-          <t-cell
-            title="{{item.title}}"
-            note="{{item.creatorName}} · {{item.createdAtText}}"
-            arrow
-            bindclick="goToNoticeDetail"
-            data-notice-id="{{item.id}}"
+      <block wx:for="{{noticeList}}" wx:for-item="notice" wx:key="id">
+        <view class="notice-wrapper">
+          <view 
+            class="notice-item {{currentIndex === index ? 'notice-item--swiped' : ''}} {{isTouching ? 'notice-item--touching' : ''}}" 
+            bindtap="onNoticeTap" 
+            bindtouchstart="onTouchStart"
+            bindtouchmove="onTouchMove"
+            bindtouchend="onTouchEnd"
+            data-notice-id="{{notice.id}}" 
+            data-index="{{index}}"
+            style="transform: translateX({{notice.translateX || 0}}rpx)"
           >
-            <t-icon slot="icon" name="notification" size="40rpx" color="#0052d9" />
-            <view slot="note" class="notice-meta">
-              <text>{{item.creatorName}}</text>
-              <text class="notice-time">{{item.createdAtText}}</text>
-              <text class="notice-attachment" wx:if="{{item.attachments && item.attachments.length > 0}}">
-                <t-icon name="attach" size="24rpx" />
-                {{item.attachments.length}}个附件
-              </text>
+            <view class="notice-header">
+              <view class="notice-title">{{notice.title}}</view>
             </view>
-          </t-cell>
-        </block>
-      </t-cell-group>
+            <view class="notice-content" wx:if="{{notice.contentPreview}}">
+              <text>{{notice.contentPreview}}</text>
+            </view>
+            <view class="notice-footer">
+              <text class="notice-time">{{notice.createdAtText}}</text>
+              <view class="notice-arrow">
+                <text class="arrow-icon">></text>
+              </view>
+            </view>
+          </view>
+          <view class="notice-item__actions" wx:if="{{isAdmin}}">
+            <view 
+              class="action-btn action-btn--delete" 
+              catchtap="onDeleteNotice"
+              data-notice-id="{{notice.id}}" 
+              data-index="{{index}}"
+            >
+              <t-icon name="delete" size="40rpx" color="#fff" />
+            </view>
+          </view>
+        </view>
+      </block>
     </view>
 
     <!-- 空状态 -->

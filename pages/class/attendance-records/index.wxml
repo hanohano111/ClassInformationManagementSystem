@@ -3,20 +3,41 @@
   <view class="attendance-records__content">
     <view class="checkin-records" wx:if="{{checkInRecords.length > 0}}">
       <block wx:for="{{checkInRecords}}" wx:for-item="record" wx:key="code">
-        <view class="record-item" bindtap="onRecordTap" data-code="{{record.code}}" data-index="{{index}}">
-          <view class="record-header">
-            <view class="record-code">签到码：{{record.code}}</view>
-            <view class="record-time">{{record.createdAtText}}</view>
+        <view class="record-wrapper">
+          <view 
+            class="record-item {{currentIndex === index ? 'record-item--swiped' : ''}} {{isTouching ? 'record-item--touching' : ''}}" 
+            bindtap="onRecordTap" 
+            bindtouchstart="onTouchStart"
+            bindtouchmove="onTouchMove"
+            bindtouchend="onTouchEnd"
+            data-code="{{record.code}}" 
+            data-index="{{index}}"
+            style="transform: translateX({{record.translateX || 0}}rpx)"
+          >
+            <view class="record-header">
+              <view class="record-code">签到码：{{record.code}}</view>
+              <view class="record-time">{{record.createdAtText}}</view>
+            </view>
+            <view class="record-note" wx:if="{{record.note}}">
+              <text class="note-label">提示：</text>
+              <text class="note-text">{{record.note}}</text>
+            </view>
+            <view class="record-stats">
+              <text>已签到：{{record.checkedInCount}}/{{record.totalMembers}}</text>
+            </view>
+            <view class="record-arrow">
+              <text class="arrow-icon">></text>
+            </view>
           </view>
-          <view class="record-note" wx:if="{{record.note}}">
-            <text class="note-label">提示：</text>
-            <text class="note-text">{{record.note}}</text>
-          </view>
-          <view class="record-stats">
-            <text>已签到：{{record.checkedInCount}}/{{record.totalMembers}}</text>
-          </view>
-          <view class="record-arrow">
-            <text class="arrow-icon">></text>
+          <view class="record-item__actions">
+            <view 
+              class="action-btn action-btn--delete" 
+              catchtap="onDeleteRecord"
+              data-code="{{record.code}}" 
+              data-index="{{index}}"
+            >
+              <t-icon name="delete" size="40rpx" color="#fff" />
+            </view>
           </view>
         </view>
       </block>
