@@ -2,10 +2,26 @@
 
 .message-page {
   background-color: #f5f7fa;
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-top: 0 !important; // 覆盖 page-with-navbar 的 padding-top，避免灰色条
+
+  // 导航栏固定定位，凌驾于所有内容之上
+  t-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999; // 确保在所有内容之上
+  }
 
   &__content {
-    padding-bottom: 32rpx;
+    height: 100vh;
+    padding-top: 200rpx; // 为导航栏预留空间，确保消息从导航栏下方开始
+    box-sizing: border-box;
+    padding-bottom: 100rpx; // 增加底部 padding，确保"已滑到底部"提示可见
   }
 }
 
@@ -17,6 +33,8 @@
 
 .message-list {
   padding: 0 32rpx;
+  padding-top: 0;
+  padding-bottom: 0; // 底部 padding 由 scroll-view 控制
 }
 
 .message-item-wrapper {
@@ -56,10 +74,38 @@
 
   &__type {
     font-size: 24rpx;
-    color: #0052d9;
-    background: #e7f3ff;
     padding: 4rpx 12rpx;
     border-radius: 8rpx;
+    
+    // 签到相关：浅红色
+    &--checkin {
+      color: #ff4d4f;
+      background: #fff1f0;
+    }
+    
+    // 通知：浅蓝色
+    &--notice {
+      color: #0052d9;
+      background: #e7f3ff;
+    }
+    
+    // 作业：黄色
+    &--assignment {
+      color: #fa8c16;
+      background: #fff7e6;
+    }
+    
+    // 请假：绿色
+    &--leave {
+      color: #52c41a;
+      background: #f6ffed;
+    }
+    
+    // 默认
+    &--default {
+      color: #0052d9;
+      background: #e7f3ff;
+    }
   }
 
   &__time {
@@ -131,4 +177,11 @@
 
 .message-empty {
   padding: 120rpx 0;
+}
+
+.message-bottom-tip {
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 24rpx;
+  color: #999;
 }

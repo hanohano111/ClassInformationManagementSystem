@@ -57,6 +57,14 @@ Page({
         }));
       }
 
+      // 格式化成员提交状态和时间
+      if (assignment.memberSubmissionList && assignment.isAdmin) {
+        assignment.memberSubmissionList = assignment.memberSubmissionList.map((member) => ({
+          ...member,
+          submittedAtText: member.submittedAt ? this.formatTime(member.submittedAt) : '',
+        }));
+      }
+
       this.setData({ assignment });
       wx.hideLoading();
     } catch (error) {

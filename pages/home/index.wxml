@@ -5,7 +5,14 @@
       <t-icon name="folder" size="40rpx" color="#333" />
     </view>
   </t-navbar>
-  <view class="message-page__content">
+  <scroll-view 
+    class="message-page__content" 
+    scroll-y 
+    scroll-with-animation
+    enable-back-to-top
+    bindscrolltolower="onScrollToLower"
+    lower-threshold="100"
+  >
     <!-- 消息列表 -->
     <view class="message-list" wx:if="{{messageList.length > 0}}">
       <view
@@ -27,7 +34,7 @@
           <view class="message-item__header">
             <view class="message-item__title-row">
               <text class="message-item__course">{{item.courseName}}</text>
-              <text class="message-item__type">{{item.typeText}}</text>
+              <text class="message-item__type message-item__type--{{item.typeClass}}">{{item.typeText}}</text>
             </view>
             <text class="message-item__time">{{item.timeText}}</text>
           </view>
@@ -51,5 +58,10 @@
     <view class="message-empty" wx:else>
       <t-empty description="暂无消息" />
     </view>
-  </view>
+
+    <!-- 底部提示 -->
+    <view class="message-bottom-tip" wx:if="{{isBottomReached && messageList.length > 0}}">
+      <text>已滑到底部</text>
+    </view>
+  </scroll-view>
 </view>

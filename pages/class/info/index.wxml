@@ -18,7 +18,7 @@
 
       <!-- 操作按钮 -->
       <view class="class-info__operation-buttons">
-        <t-button theme="primary" block bindtap="hideClass" style="margin-bottom: 16rpx;">
+        <t-button theme="primary" block bindtap="hideClass" style="margin-bottom: 45rpx;">
           隐藏课程
         </t-button>
         <t-button theme="danger" block bindtap="exitClass">

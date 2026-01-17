@@ -10,14 +10,45 @@
 
     <!-- 作业列表 -->
     <view class="assignments__list" wx:if="{{assignmentList.length > 0}}">
-      <view class="assignment-item" wx:for="{{assignmentList}}" wx:for-item="item" wx:key="id" bindtap="goToAssignmentDetail" data-assignment-id="{{item.id}}">
-        <view class="assignment-item__title">{{item.title}}</view>
+      <block wx:for="{{assignmentList}}" wx:for-item="assignment" wx:key="id">
+        <view class="assignment-wrapper">
+          <view 
+            class="assignment-item {{currentIndex === index ? 'assignment-item--swiped' : ''}} {{isTouching ? 'assignment-item--touching' : ''}}" 
+            bindtap="onAssignmentTap" 
+            bindtouchstart="onTouchStart"
+            bindtouchmove="onTouchMove"
+            bindtouchend="onTouchEnd"
+            data-assignment-id="{{assignment.id}}" 
+            data-index="{{index}}"
+            style="transform: translateX({{assignment.translateX || 0}}rpx)"
+          >
+            <view class="assignment-item__content">
+              <view class="assignment-item__title">{{assignment.title}}</view>
+              <view class="assignment-item__deadline" wx:if="{{assignment.deadlineText}}">
+                <text class="deadline-text">{{assignment.deadlineText}}</text>
+              </view>
+            </view>
         <view class="assignment-item__status">
-          <text class="status-tag status-tag--submitted" wx:if="{{item.hasSubmitted}}">已提交</text>
-          <text class="status-tag status-tag--overdue" wx:if="{{item.isOverdue && !item.hasSubmitted}}">已过期</text>
-          <text class="status-tag status-tag--pending" wx:if="{{!item.hasSubmitted && !item.isOverdue}}">未提交</text>
+              <text class="status-tag status-tag--submitted" wx:if="{{assignment.hasSubmitted}}">已提交</text>
+              <text class="status-tag status-tag--overdue" wx:if="{{assignment.isOverdue && !assignment.hasSubmitted}}">已过期</text>
+              <text class="status-tag status-tag--pending" wx:if="{{!assignment.hasSubmitted && !assignment.isOverdue}}">未提交</text>
+            </view>
+            <view class="assignment-item__arrow">
+              <text class="arrow-icon">></text>
+            </view>
+          </view>
+          <view class="assignment-item__actions" wx:if="{{isAdmin}}">
+            <view 
+              class="action-btn action-btn--delete" 
+              catchtap="onDeleteAssignment"
+              data-assignment-id="{{assignment.id}}" 
+              data-index="{{index}}"
+            >
+              <t-icon name="delete" size="40rpx" color="#fff" />
+            </view>
+          </view>
         </view>
-      </view>
+      </block>
     </view>
 
     <!-- 空状态 -->

@@ -7,6 +7,7 @@ Page({
     touchStartX: 0,
     touchStartY: 0,
     currentIndex: -1, // 当前左滑的消息索引
+    isBottomReached: false, // 是否已滑到底部
   },
 
   onLoad() {
@@ -44,6 +45,7 @@ Page({
           ...msg,
           timeText: this.formatTime(msg.timestamp),
           typeText: this.getTypeText(msg.type),
+          typeClass: this.getTypeClass(msg.type), // 添加类型类名用于样式
           translateX: 0, // 左滑距离
         }));
 
@@ -187,6 +189,40 @@ Page({
       assignment_notice: '作业通知',
     };
     return typeMap[type] || '消息';
+  },
+
+  /** 获取消息类型类名用于样式 */
+  getTypeClass(type) {
+    // 签到相关：浅红色
+    if (type === 'checkin' || type === 'checkin_notice') {
+      return 'checkin';
+    }
+    // 通知：浅蓝色
+    if (type === 'notice') {
+      return 'notice';
+    }
+    // 作业：黄色
+    if (type === 'assignment_submit' || type === 'assignment_notice') {
+      return 'assignment';
+    }
+    // 请假：绿色
+    if (type === 'leave_request') {
+      return 'leave';
+    }
+    return 'default';
+  },
+
+  /** 滚动到底部 */
+  onScrollToLower() {
+    this.setData({
+      isBottomReached: true,
+    });
+    // 3秒后隐藏提示
+    setTimeout(() => {
+      this.setData({
+        isBottomReached: false,
+      });
+    }, 3000);
   },
 
   /** 点击消息项 */

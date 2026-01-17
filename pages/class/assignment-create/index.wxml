@@ -25,12 +25,25 @@
       </view>
 
       <view class="form-item">
-        <t-date-time-picker
-          label="截止时间"
-          value="{{form.deadline}}"
-          bindchange="onDeadlineChange"
-          mode="datetime"
-        />
+        <view class="form-label">截止日期 <text class="required">*</text></view>
+        <picker mode="date" value="{{form.deadlineDate}}" start="{{minDate}}" bindchange="onDeadlineDateChange">
+          <view class="picker-display">
+            <text class="picker-text" wx:if="{{form.deadlineDate}}">{{form.deadlineDate}}</text>
+            <text class="picker-placeholder" wx:else>请选择截止日期</text>
+            <t-icon name="chevron-right" size="24rpx" color="#999" />
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">截止时间 <text class="required">*</text></view>
+        <picker mode="time" value="{{form.deadlineTime}}" bindchange="onDeadlineTimeChange">
+          <view class="picker-display">
+            <text class="picker-text" wx:if="{{form.deadlineTime}}">{{form.deadlineTime}}</text>
+            <text class="picker-placeholder" wx:else>请选择截止时间</text>
+            <t-icon name="chevron-right" size="24rpx" color="#999" />
+          </view>
+        </picker>
       </view>
 
       <!-- 附件列表 -->

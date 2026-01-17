@@ -8,17 +8,15 @@
         <text class="meta-item">{{assignment.creatorName}}</text>
         <text class="meta-divider">·</text>
         <text class="meta-item">{{assignment.createdAtText}}</text>
-        <text class="meta-deadline" wx:if="{{assignment.deadline}}">
-          · 截止：{{assignment.deadlineText}}
-        </text>
-        <text class="meta-deadline-overdue" wx:if="{{assignment.deadline && assignment.isOverdue}}">
-          (已过期)
-        </text>
+      </view>
+      <view class="assignment-deadline" wx:if="{{assignment.deadline}}">
+        <text class="deadline-label">截止时间：</text>
+        <text class="deadline-text">{{assignment.deadlineText}}</text>
       </view>
     </view>
 
     <!-- 作业正文 -->
-    <view class="assignment-detail__body">
+    <view class="assignment-detail__body" wx:if="{{assignment.content}}">
       <view class="assignment-content">{{assignment.content}}</view>
     </view>
 
@@ -39,33 +37,32 @@
       </view>
     </view>
 
-    <!-- 提交状态 -->
-    <view class="assignment-detail__submit-status" wx:if="{{assignment.hasSubmitted}}">
-      <view class="submit-status-header">
-        <t-icon name="check-circle" size="32rpx" color="#52c41a" />
-        <text class="submit-status-text">已提交</text>
+    <!-- 提交作业按钮 -->
+    <view class="assignment-detail__actions" wx:if="{{!assignment.hasSubmitted}}">
+      <t-button theme="primary" block bindtap="goToSubmitAssignment" disabled="{{assignment.isOverdue}}">
+        {{assignment.isOverdue ? '已过期，无法提交' : '提交作业'}}
+      </t-button>
+    </view>
+
+    <!-- 成员提交情况（仅管理员可见） -->
+    <view class="assignment-detail__members" wx:if="{{assignment.isAdmin && assignment.memberSubmissionList && assignment.memberSubmissionList.length > 0}}">
+      <view class="members-title">成员提交情况</view>
+      <view class="members-list">
+        <block wx:for="{{assignment.memberSubmissionList}}" wx:for-item="member" wx:key="userId">
+          <view class="member-item">
+            <view class="member-info">
+              <text class="member-name">{{member.name}}</text>
       </view>
-      <view class="submit-content" wx:if="{{assignment.submission && assignment.submission.content}}">
-        {{assignment.submission.content}}
+            <view class="member-status">
+              <text class="status-text status-submitted" wx:if="{{member.hasSubmitted}}">已提交</text>
+              <text class="status-text status-unsubmitted" wx:else>未提交</text>
+              <view class="member-submit-time" wx:if="{{member.hasSubmitted && member.submittedAtText}}">
+                <text class="time-text">{{member.submittedAtText}}</text>
       </view>
-      <view class="submit-attachments" wx:if="{{assignment.submission && assignment.submission.attachments && assignment.submission.attachments.length > 0}}">
-        <view class="submit-attachments-title">提交的附件（{{assignment.submission.attachments.length}}）</view>
-        <block wx:for="{{assignment.submission.attachments}}" wx:for-item="item" wx:key="index">
-          <view class="attachment-item" bindtap="previewAttachment" data-url="{{item.url}}" data-name="{{item.name}}">
-            <t-icon name="attach" size="32rpx" color="#0052d9" />
-            <view class="attachment-info">
-              <view class="attachment-name">{{item.name}}</view>
             </view>
           </view>
         </block>
       </view>
-    </view>
-
-    <!-- 提交作业按钮 -->
-    <view class="assignment-detail__actions" wx:if="{{!assignment.hasSubmitted}}">
-      <t-button theme="primary" block bindtap="goToSubmitAssignment">
-        提交作业
-      </t-button>
     </view>
   </view>
 </view>

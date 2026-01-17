@@ -51,7 +51,7 @@ exports.main = async (event) => {
       const member = memberMap[courseId];
       const isAdmin = member.role === 'admin' || course.creatorOpenid === openid;
 
-      // 管理员消息：作业提交情况
+      // 管理员消息：作业通知 - 显示当前用户的提交状态（不再显示其他成员的提交情况）
       if (isAdmin) {
         // 获取该课程的所有作业
         const assignmentRes = await assignments
@@ -60,36 +60,28 @@ exports.main = async (event) => {
           .get();
 
         for (const assignment of assignmentRes.data) {
-          // 获取该作业的所有提交（最近一周）
+          // 检查当前管理员用户是否已提交
           const submissionRes = await assignmentSubmissions
             .where({
               assignmentId: assignment._id,
-              createdAt: db.command.gte(oneWeekAgo),
+              openid: openid,
             })
-            .orderBy('createdAt', 'desc')
             .get();
 
-          if (submissionRes.data.length > 0) {
-            // 获取提交者信息
-            const submitterOpenids = [...new Set(submissionRes.data.map(s => s.openid))];
-            const userRes = await users
-              .where({
-                openid: db.command.in(submitterOpenids),
-              })
-              .get();
-            const submitterNames = userRes.data.map(u => u.name || '未知用户').slice(0, 3);
-            
-            messages.push({
-              type: 'assignment_submit',
-              courseId: courseId,
-              courseName: course.name || '未知课程',
-              title: `作业提交：${assignment.title}`,
-              content: `${submitterNames.join('、')}${submissionRes.data.length > 3 ? '等' : ''} ${submissionRes.data.length} 人提交了作业`,
-              timestamp: submissionRes.data[0].submittedAt || submissionRes.data[0].createdAt || submissionRes.data[0].updatedAt,
-              relatedId: assignment._id,
-              relatedType: 'assignment',
-            });
-          }
+          const hasSubmitted = submissionRes.data.length > 0;
+          const statusText = hasSubmitted ? '已提交' : '未提交';
+          
+          // 所有作业都显示通知，包含当前用户的提交状态
+          messages.push({
+            type: 'assignment_notice',
+            courseId: courseId,
+            courseName: course.name || '未知课程',
+            title: `作业：${assignment.title}`,
+            content: `状态：${statusText}`, // 只显示当前用户的提交状态
+            timestamp: assignment.createdAt,
+            relatedId: assignment._id,
+            relatedType: 'assignment',
+          });
         }
 
         // 管理员消息：签到情况（新生成的签到码）
@@ -193,7 +185,7 @@ exports.main = async (event) => {
         });
       }
 
-      // 成员消息（包括管理员）：作业通知
+      // 成员消息（包括管理员）：作业通知 - 显示当前用户的提交状态
       const assignmentNoticeRes = await assignments
         .where({
           courseId: courseId,
@@ -203,7 +195,7 @@ exports.main = async (event) => {
         .get();
 
       for (const assignment of assignmentNoticeRes.data) {
-        // 检查是否已提交
+        // 检查当前用户是否已提交
         const submissionRes = await assignmentSubmissions
           .where({
             assignmentId: assignment._id,
@@ -211,19 +203,20 @@ exports.main = async (event) => {
           })
           .get();
 
-        if (submissionRes.data.length === 0) {
-          // 未提交，显示通知
-          messages.push({
-            type: 'assignment_notice',
-            courseId: courseId,
-            courseName: course.name || '未知课程',
-            title: `作业通知：${assignment.title}`,
-            content: assignment.content || '',
-            timestamp: assignment.createdAt,
-            relatedId: assignment._id,
-            relatedType: 'assignment',
-          });
-        }
+        const hasSubmitted = submissionRes.data.length > 0;
+        const statusText = hasSubmitted ? '已提交' : '未提交';
+        
+        // 所有作业都显示通知，包含当前用户的提交状态
+        messages.push({
+          type: 'assignment_notice',
+          courseId: courseId,
+          courseName: course.name || '未知课程',
+          title: `作业：${assignment.title}`,
+          content: `状态：${statusText}`, // 只显示当前用户的提交状态
+          timestamp: assignment.createdAt,
+          relatedId: assignment._id,
+          relatedType: 'assignment',
+        });
       }
     }
 

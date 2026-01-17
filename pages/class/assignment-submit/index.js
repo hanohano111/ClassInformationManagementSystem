@@ -1,4 +1,5 @@
 // pages/class/assignment-submit/index.js
+const app = getApp();
 
 Page({
   data: {
@@ -148,9 +149,18 @@ Page({
         icon: 'success',
       });
 
+      // 通知作业列表刷新
+      const appInstance = getApp();
+      if (appInstance && appInstance.eventBus) {
+        console.log('[提交作业] 触发作业提交事件，assignmentId:', assignmentId);
+        appInstance.eventBus.emit('assignment-submitted', {
+          assignmentId: assignmentId,
+        });
+      }
+
       setTimeout(() => {
         wx.navigateBack();
-      }, 1500);
+      }, 500);
     } catch (error) {
       wx.hideLoading();
       this.setData({ submitting: false });

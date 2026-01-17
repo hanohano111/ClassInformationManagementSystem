@@ -7,8 +7,12 @@ Page({
       title: '',
       content: '',
       deadline: '',
+      deadlineDate: '',
+      deadlineTime: '',
+      deadlineText: '',
       attachments: [],
     },
+    minDate: '',
     submitting: false,
   },
 
@@ -22,6 +26,14 @@ Page({
         wx.navigateBack();
       }, 1500);
     }
+
+    // 设置最小日期为今天
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const minDate = `${year}-${month}-${day}`;
+    this.setData({ minDate });
   },
 
   /** 标题输入 */
@@ -38,11 +50,43 @@ Page({
     });
   },
 
-  /** 截止时间选择 */
-  onDeadlineChange(e) {
+  /** 截止日期选择 */
+  onDeadlineDateChange(e) {
+    const date = e.detail.value || '';
     this.setData({
-      'form.deadline': e.detail.value || '',
+      'form.deadlineDate': date,
     });
+    this.updateDeadline();
+  },
+
+  /** 截止时间选择 */
+  onDeadlineTimeChange(e) {
+    const time = e.detail.value || '';
+    this.setData({
+      'form.deadlineTime': time,
+    });
+    this.updateDeadline();
+  },
+
+  /** 更新截止时间 */
+  updateDeadline() {
+    const { deadlineDate, deadlineTime } = this.data.form;
+    if (deadlineDate && deadlineTime) {
+      // 组合日期和时间，转换为时间戳
+      const dateTimeStr = `${deadlineDate} ${deadlineTime}:00`;
+      const deadline = new Date(dateTimeStr).getTime();
+      const deadlineText = `${deadlineDate} ${deadlineTime}`;
+      
+      this.setData({
+        'form.deadline': deadline,
+        'form.deadlineText': deadlineText,
+      });
+    } else {
+      this.setData({
+        'form.deadline': '',
+        'form.deadlineText': '',
+      });
+    }
   },
 
   /** 添加附件 */
@@ -144,11 +188,32 @@ Page({
       return;
     }
 
+    if (!form.deadlineDate || !form.deadlineTime) {
+      wx.showToast({
+        title: '请选择截止日期和时间',
+        icon: 'none',
+      });
+      return;
+    }
+
+    // 组合日期和时间，检查是否在未来
+    const dateTimeStr = `${form.deadlineDate} ${form.deadlineTime}:00`;
+    const deadline = new Date(dateTimeStr).getTime();
+    if (deadline <= Date.now()) {
+      wx.showToast({
+        title: '截止时间必须在未来',
+        icon: 'none',
+      });
+      return;
+    }
+
     this.setData({ submitting: true });
     wx.showLoading({ title: '发布中...', mask: true });
 
     try {
-      const deadline = form.deadline ? new Date(form.deadline).getTime() : null;
+      // 组合日期和时间
+      const dateTimeStr = `${form.deadlineDate} ${form.deadlineTime}:00`;
+      const deadline = new Date(dateTimeStr).getTime();
 
       const res = await wx.cloud.callFunction({
         name: 'createAssignment',

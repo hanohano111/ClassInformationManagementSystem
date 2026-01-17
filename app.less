@@ -1,8 +1,27 @@
 /**app.wxss**/
 @import "miniprogram_npm/tdesign-miniprogram/common/style/index.wxss";
 
+/* 全局主题色覆盖：primary 按钮为透明度高的浅蓝色背景+蓝色文字，无边框；danger 按钮为透明度高的浅红色背景+红色文字，无边框 */
 page {
   background-color: #f3f3f3;
+  
+  /* Primary 按钮样式：浅蓝色背景（高透明度）+ 蓝色文字 + 无边框 */
+  --td-button-primary-bg-color: rgba(24, 144, 255, 0.25);
+  --td-button-primary-active-bg-color: rgba(24, 144, 255, 0.35);
+  --td-button-primary-hover-bg-color: rgba(24, 144, 255, 0.3);
+  --td-button-primary-disabled-bg-color: rgba(217, 217, 217, 0.5);
+  --td-button-primary-color: #1890ff;
+  --td-button-primary-disabled-color: #bfbfbf;
+  --td-button-primary-border-color: transparent;
+  
+  /* Danger 按钮样式：浅红色背景（高透明度）+ 红色文字 + 无边框 */
+  --td-button-danger-bg-color: rgba(255, 77, 79, 0.25);
+  --td-button-danger-active-bg-color: rgba(255, 77, 79, 0.35);
+  --td-button-danger-hover-bg-color: rgba(255, 77, 79, 0.3);
+  --td-button-danger-disabled-bg-color: rgba(217, 217, 217, 0.5);
+  --td-button-danger-color: #ff4d4f;
+  --td-button-danger-disabled-color: #bfbfbf;
+  --td-button-danger-border-color: transparent;
 }
 
 .page {

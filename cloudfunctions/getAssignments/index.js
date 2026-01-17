@@ -32,14 +32,18 @@ exports.main = async (event) => {
       })
       .get();
 
-    // 创建提交状态映射
+    // 创建提交状态映射 - 确保使用字符串类型作为键
     const submissionMap = {};
     submissionRes.data.forEach((sub) => {
-      submissionMap[sub.assignmentId] = true;
+      // 确保 assignmentId 是字符串
+      const assignmentId = String(sub.assignmentId || '');
+      submissionMap[assignmentId] = true;
     });
 
     const assignmentList = (assignmentRes.data || []).map((assignment) => {
-      const hasSubmitted = submissionMap[assignment._id] || false;
+      // 确保 _id 转换为字符串后再匹配
+      const assignmentId = String(assignment._id || '');
+      const hasSubmitted = Boolean(submissionMap[assignmentId]);
       const isOverdue = assignment.deadline && Date.now() > assignment.deadline;
       
       return {
