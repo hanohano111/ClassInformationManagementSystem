@@ -7,20 +7,10 @@ Page({
       image: '',
       name: '',
       studentNo: '',
-      gender: 0,
-      birth: '',
-      introduction: '',
+      college: '',
+      major: '',
+      phone: '',
     },
-    genderOptions: [
-      { label: '男', value: 0 },
-      { label: '女', value: 1 },
-      { label: '保密', value: 2 },
-    ],
-    birthVisible: false,
-    birthStart: '1970-01-01',
-    birthEnd: '2025-03-01',
-    birthTime: 0,
-    birthFilter: (type, options) => (type === 'year' ? options.sort((a, b) => b.value - a.value) : options),
   },
 
   async onLoad() {
@@ -41,38 +31,15 @@ Page({
             image: info.image || info.avatar || '',
             name: info.name || '',
             studentNo: info.studentNo || '',
-            gender: info.gender ?? 0,
-            birth: info.birth || '',
-            introduction: info.introduction || info.brief || '',
+            college: info.college || '',
+            major: info.major || '',
+            phone: info.phone || '',
           },
         });
       }
     } catch (e) {
       console.error('获取个人信息失败：', e);
     }
-  },
-
-  showPicker(e) {
-    const { mode } = e.currentTarget.dataset;
-    this.setData({
-      [`${mode}Visible`]: true,
-    });
-  },
-
-  hidePicker(e) {
-    const { mode } = e.currentTarget.dataset;
-    this.setData({
-      [`${mode}Visible`]: false,
-    });
-  },
-
-  onPickerChange(e) {
-    const { value } = e.detail;
-    const { mode } = e.currentTarget.dataset;
-
-    this.setData({
-      [`personInfo.${mode}`]: value,
-    });
   },
 
   personInfoFieldChange(field, e) {
@@ -90,12 +57,16 @@ Page({
     this.personInfoFieldChange('studentNo', e);
   },
 
-  onGenderChange(e) {
-    this.personInfoFieldChange('gender', e);
+  onCollegeChange(e) {
+    this.personInfoFieldChange('college', e);
   },
 
-  onIntroductionChange(e) {
-    this.personInfoFieldChange('introduction', e);
+  onMajorChange(e) {
+    this.personInfoFieldChange('major', e);
+  },
+
+  onPhoneChange(e) {
+    this.personInfoFieldChange('phone', e);
   },
 
   onAvatarChange() {
@@ -198,25 +169,38 @@ Page({
       avatar: avatar,
       name: personInfo.name,
       studentNo: personInfo.studentNo,
-      gender: personInfo.gender,
-      birth: personInfo.birth,
-      introduction: personInfo.introduction,
+      college: personInfo.college,
+      major: personInfo.major,
+      phone: personInfo.phone,
     };
+
+    console.log('[编辑资料] 准备保存的数据:', payload);
 
     try {
       wx.showLoading({ title: '保存中...', mask: true });
       
-      // 对敏感字段 AES，加密 studentNo（phone 如需要也可加）
+      // 对所有字段（除了avatar）进行 AES 加密
       const encrypted = await encryptFields(
         payload,
-        ['studentNo'], // 这里如果你个人信息里也允许改手机号，就把 phone 也加进来
+        ['name', 'studentNo', 'college', 'major', 'phone'], // 除了 avatar 外的所有字段都加密
       );
+
+      console.log('[编辑资料] 加密后的数据:', {
+        ...encrypted,
+        name: encrypted.name ? '[已加密]' : undefined,
+        studentNo: encrypted.studentNo ? '[已加密]' : undefined,
+        college: encrypted.college ? '[已加密]' : undefined,
+        major: encrypted.major ? '[已加密]' : undefined,
+        phone: encrypted.phone ? '[已加密]' : undefined,
+      });
 
       const res = await wx.cloud.callFunction({
         name: 'updateUserInfo',
         data: encrypted,
       });
       const result = res.result || {};
+      
+      console.log('[编辑资料] 云函数返回结果:', result);
 
       wx.hideLoading();
 
@@ -226,6 +210,19 @@ Page({
           icon: 'success',
           duration: 1500,
         });
+        
+        console.log('[编辑资料] 保存成功，准备触发刷新事件');
+        
+        // 触发用户信息更新事件，通知其他页面刷新
+        const app = getApp();
+        if (app && app.eventBus) {
+          console.log('[编辑资料] 触发 user-info-updated 事件');
+          app.eventBus.emit('user-info-updated');
+        } else {
+          console.warn('[编辑资料] eventBus 不存在');
+        }
+        
+        // 延迟返回，确保事件已触发
         setTimeout(() => {
           wx.navigateBack();
         }, 1500);

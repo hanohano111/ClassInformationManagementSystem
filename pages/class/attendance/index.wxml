@@ -43,9 +43,7 @@
   <!-- 签到码签到 -->
   <view class="attendance__section">
     <view class="section-title">签到码签到</view>
-    <view class="location-tip">
-      请输入4位签到码，确认签到时会同时获取您的位置信息
-    </view>
+    <view class="location-tip">请输入4位签到码完成签到</view>
     <t-input
       placeholder="请输入4位签到码"
       value="{{checkInCodeInput}}"

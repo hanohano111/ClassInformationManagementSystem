@@ -25,7 +25,13 @@
       <view class="attachments-title">附件（{{assignment.attachments.length}}）</view>
       <view class="attachments-list">
         <block wx:for="{{assignment.attachments}}" wx:for-item="item" wx:key="index">
-          <view class="attachment-item" bindtap="previewAttachment" data-url="{{item.url}}" data-name="{{item.name}}">
+          <view
+            class="attachment-item"
+            bindtap="previewAttachment"
+            data-url="{{item.url || item.fileID || item.fileId || item.tempFileURL}}"
+            data-name="{{item.name}}"
+            data-fileid="{{item.fileID || item.fileId}}"
+          >
             <t-icon name="attach" size="32rpx" color="#0052d9" />
             <view class="attachment-info">
               <view class="attachment-name">{{item.name}}</view>
@@ -37,10 +43,10 @@
       </view>
     </view>
 
-    <!-- 提交作业按钮 -->
+    <!-- 提交作业按钮（允许过期后提交，计为迟交） -->
     <view class="assignment-detail__actions" wx:if="{{!assignment.hasSubmitted}}">
-      <t-button theme="primary" block bindtap="goToSubmitAssignment" disabled="{{assignment.isOverdue}}">
-        {{assignment.isOverdue ? '已过期，无法提交' : '提交作业'}}
+      <t-button theme="primary" block bindtap="goToSubmitAssignment">
+        提交作业
       </t-button>
     </view>
 
@@ -48,14 +54,15 @@
     <view class="assignment-detail__members" wx:if="{{assignment.isAdmin && assignment.memberSubmissionList && assignment.memberSubmissionList.length > 0}}">
       <view class="members-title">成员提交情况</view>
       <view class="members-list">
-        <block wx:for="{{assignment.memberSubmissionList}}" wx:for-item="member" wx:key="userId">
-          <view class="member-item">
+        <block wx:for="{{assignment.memberSubmissionList}}" wx:for-item="member" wx:for-index="idx" wx:key="userId">
+          <view class="member-item" bindtap="onMemberTap" data-index="{{idx}}">
             <view class="member-info">
               <text class="member-name">{{member.name}}</text>
       </view>
             <view class="member-status">
-              <text class="status-text status-submitted" wx:if="{{member.hasSubmitted}}">已提交</text>
-              <text class="status-text status-unsubmitted" wx:else>未提交</text>
+              <text class="status-chip status-submitted" wx:if="{{member.submitStatusText === '已提交'}}">已提交</text>
+              <text class="status-chip status-overdue" wx:if="{{member.submitStatusText === '迟交'}}">迟交</text>
+              <text class="status-chip status-unsubmitted" wx:if="{{member.submitStatusText === '未提交'}}">未提交</text>
               <view class="member-submit-time" wx:if="{{member.hasSubmitted && member.submittedAtText}}">
                 <text class="time-text">{{member.submittedAtText}}</text>
       </view>

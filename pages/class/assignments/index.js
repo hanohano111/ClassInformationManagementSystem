@@ -76,20 +76,24 @@ Page({
       const assignments = result.data || [];
       // 格式化时间并确保状态字段正确
       const assignmentList = assignments.map((assignment) => {
-        // 确保 hasSubmitted 是布尔值
         const hasSubmitted = Boolean(assignment.hasSubmitted);
-        // 确保 isOverdue 是布尔值
-        const isOverdue = Boolean(assignment.isOverdue);
+        const deadline = assignment.deadline;
+        const submittedAt = assignment.submittedAt;
+        const isLate =
+          hasSubmitted && deadline && submittedAt && submittedAt > deadline;
+        const statusText = hasSubmitted ? (isLate ? '迟交' : '已提交') : '未提交';
+        const isOverdue = deadline ? Date.now() > deadline : false;
         
         return {
-        ...assignment,
+          ...assignment,
           id: String(assignment.id || assignment._id || ''),
-        createdAtText: this.formatTime(assignment.createdAt),
-        deadlineText: assignment.deadline ? this.formatDeadlineTime(assignment.deadline) : '',
+          createdAtText: this.formatTime(assignment.createdAt),
+          deadlineText: assignment.deadline ? this.formatDeadlineTime(assignment.deadline) : '',
           translateX: 0, // 初始化滑动距离
-          // 明确设置提交状态
-          hasSubmitted: hasSubmitted,
-          isOverdue: isOverdue,
+          hasSubmitted,
+          isOverdue,
+          submittedAt,
+          submitStatusText: statusText,
         };
       });
 

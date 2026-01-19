@@ -157,19 +157,31 @@
           text-align: right;
           min-width: 200rpx;
 
-          .status-text {
-            display: block;
-            font-size: 26rpx;
+          .status-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rpx 16rpx;
+            border-radius: 999rpx;
+            font-size: 24rpx;
             font-weight: 500;
             margin-bottom: 8rpx;
+            line-height: 1;
           }
 
           .status-submitted {
-            color: #52c41a;
+            color: #2f9a00;
+            background: rgba(82, 196, 26, 0.12);
+          }
+
+          .status-overdue {
+            color: #d46b08;
+            background: rgba(250, 173, 20, 0.16);
           }
 
           .status-unsubmitted {
-            color: #999;
+            color: #cf1322;
+            background: rgba(255, 77, 79, 0.12);
           }
 
           .member-submit-time {

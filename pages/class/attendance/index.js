@@ -10,7 +10,6 @@ Page({
     checkInCodeExpireTime: null, // 签到码过期时间（时间戳）
     remainTimeText: '', // 剩余时间文本
     checkInCodeInput: '', // 输入的签到码
-    location: null, // 定位信息
     showGeneratePopup: false, // 显示生成签到码弹窗
     generateForm: {
       note: '', // 签到提示
@@ -258,7 +257,7 @@ Page({
     console.log('[签到码输入] 当前值:', value, '长度:', value.length);
   },
 
-  /** 签到码签到（同时进行定位签到） */
+  /** 签到码签到 */
   async checkInByCode() {
     const { checkInCodeInput, courseId } = this.data;
 
@@ -274,48 +273,7 @@ Page({
       return;
     }
 
-    // 先获取定位
-    wx.showLoading({ title: '获取定位中...' });
-    let location = null;
-
-    try {
-      // 检查定位权限
-      const settingRes = await wx.getSetting();
-      if (!settingRes.authSetting['scope.userLocation']) {
-        await wx.authorize({
-          scope: 'scope.userLocation',
-        });
-      }
-
-      // 获取精确定位
-      location = await this.getPreciseLocation();
-    } catch (authError) {
-      wx.hideLoading();
-      if (authError.errMsg && (authError.errMsg.includes('auth deny') || authError.errMsg.includes('authorize'))) {
-        wx.showModal({
-          title: '需要位置权限',
-          content: '签到需要获取您的位置信息，请在设置中开启位置权限',
-          showCancel: false,
-        });
-      } else {
-        wx.showToast({
-          title: '获取定位失败，请重试',
-          icon: 'none',
-        });
-      }
-      return;
-    }
-
-    if (!location) {
-      wx.hideLoading();
-      wx.showToast({
-        title: '获取定位失败，请重试',
-        icon: 'none',
-      });
-      return;
-    }
-
-    // 进行签到（同时提交签到码和定位信息）
+    // 进行签到
     wx.showLoading({ title: '签到中...' });
 
     try {
@@ -324,9 +282,6 @@ Page({
         data: {
           courseId: courseId,
           code: code,
-          latitude: location.latitude,
-          longitude: location.longitude,
-          accuracy: location.accuracy || 0,
         },
       });
 
@@ -368,31 +323,6 @@ Page({
         duration: 3000,
       });
     }
-  },
-
-  /** 获取精确定位 */
-  getPreciseLocation() {
-    return new Promise((resolve, reject) => {
-      wx.getLocation({
-        type: 'gcj02', // 返回可以用于wx.openLocation的经纬度
-        altitude: true, // 传入 true 会返回高度信息
-        isHighAccuracy: true, // 开启高精度定位
-        highAccuracyExpireTime: 10000, // 高精度定位超时时间10秒
-        success: (res) => {
-          console.log('[定位签到] 获取定位成功:', res);
-          resolve({
-            latitude: res.latitude,
-            longitude: res.longitude,
-            accuracy: res.accuracy || 0,
-            altitude: res.altitude || 0,
-          });
-        },
-        fail: (err) => {
-          console.error('[定位签到] 获取定位失败:', err);
-          reject(err);
-        },
-      });
-    });
   },
 
 

@@ -37,9 +37,6 @@
               <view class="member-checkin-time" wx:if="{{member.hasCheckedIn && member.checkInTimeText}}">
                 <text class="time-text">{{member.checkInTimeText}}</text>
               </view>
-              <view class="member-location" wx:if="{{member.hasCheckedIn && member.latitudeText && member.longitudeText}}">
-                <text class="location-text">定位：{{member.latitudeText}}, {{member.longitudeText}}</text>
-              </view>
             </view>
           </view>
           <view class="member-item__actions" wx:if="{{isAdmin}}">

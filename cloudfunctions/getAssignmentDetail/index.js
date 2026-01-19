@@ -1,4 +1,5 @@
 const cloud = require('wx-server-sdk');
+const { decryptFieldsFromDB } = require('./common/aes');
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
@@ -98,16 +99,53 @@ exports.main = async (event) => {
         const user = userMap[member.openid] || {};
         const submission = submissionMap[member.openid] || null;
 
+        // 解密姓名（优先用户表，其次提交记录中的 studentName）
+        let decryptedUser = { ...user };
+        if (user && (user.name || user.name_iv)) {
+          decryptedUser = decryptFieldsFromDB(
+            {
+              name: user.name || '',
+              name_iv: user.name_iv,
+            },
+            ['name'],
+          );
+        }
+
+        let displayName = decryptedUser.name || '';
+        if ((!displayName || displayName === '未设置名称') && submission && (submission.studentName || submission.studentName_iv)) {
+          const decryptedSubmission = decryptFieldsFromDB(
+            {
+              studentName: submission.studentName || '',
+              studentName_iv: submission.studentName_iv,
+            },
+            ['studentName'],
+          );
+          displayName = decryptedSubmission.studentName || displayName;
+        }
+        if (!displayName && user && user.name) {
+          displayName = user.name; // 兜底使用原字段，避免展示为空
+        }
+
+        const submissionAttachments = (submission && submission.attachments) || [];
+
         return {
           userId: user._id,
           openid: member.openid,
-          name: user.name || '未设置名称',
+          name: displayName || '未设置名称',
           hasSubmitted: !!submission,
           submittedAt: submission ? submission.submittedAt : null,
           submission: submission,
+          submissionAttachments,
         };
       });
     }
+
+    // 解密布置人姓名
+    let creator = {
+      name: assignmentData.creatorName || '',
+      name_iv: assignmentData.creatorName_iv,
+    };
+    creator = decryptFieldsFromDB(creator, ['name']);
 
     const assignment = {
       id: assignmentData._id,
@@ -116,7 +154,7 @@ exports.main = async (event) => {
       attachments: assignmentData.attachments || [],
       courseId: assignmentData.courseId,
       creatorId: assignmentData.creatorId,
-      creatorName: assignmentData.creatorName || '',
+      creatorName: creator.name || '',
       deadline: assignmentData.deadline,
       createdAt: assignmentData.createdAt,
       updatedAt: assignmentData.updatedAt,

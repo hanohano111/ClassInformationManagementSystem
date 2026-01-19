@@ -23,11 +23,7 @@ exports.main = async (event) => {
       return { code: 404, success: false, message: '作业不存在' };
     }
 
-    // 检查是否超过截止时间
     const assignment = assignmentRes.data;
-    if (assignment.deadline && Date.now() > assignment.deadline) {
-      return { code: 400, success: false, message: '作业已超过截止时间，无法提交' };
-    }
 
     // 检查是否已提交
     const existingRes = await assignmentSubmissions

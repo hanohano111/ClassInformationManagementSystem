@@ -98,23 +98,33 @@ exports.main = async (event) => {
         }
       });
 
-      // 构建成员签到状态列表
+      // 构建成员签到状态列表（解密姓名与学号）
       const memberStatusList = allMembersRes.data.map((member) => {
         const user = userMap[member.openid] || {};
         // 使用 userId 来匹配记录
         const record = user._id ? recordMap[user._id] : null;
 
-        // 解密学号
-        let studentNo = '';
-        if (user.studentNo && user.studentNo_iv) {
-          const decryptedUser = decryptFieldsFromDB(user, ['studentNo']);
-          studentNo = decryptedUser.studentNo || '';
+        // 解密姓名与学号
+        let decryptedUser = {
+          name: user.name || '',
+          studentNo: '',
+        };
+        if ((user.name && user.name_iv) || (user.studentNo && user.studentNo_iv)) {
+          decryptedUser = decryptFieldsFromDB(
+            {
+              name: user.name || '',
+              name_iv: user.name_iv,
+              studentNo: user.studentNo || '',
+              studentNo_iv: user.studentNo_iv,
+            },
+            ['name', 'studentNo'],
+          );
         }
 
         return {
           userId: user._id,
-          name: user.name || '未设置名称',
-          studentNo: studentNo,
+          name: decryptedUser.name || user.name || '未设置名称',
+          studentNo: decryptedUser.studentNo || '',
           hasCheckedIn: !!record,
           checkInTime: record ? record.checkInTime : null,
           latitude: record && record.latitude ? record.latitude : null,

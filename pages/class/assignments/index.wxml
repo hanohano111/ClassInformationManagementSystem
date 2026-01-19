@@ -28,10 +28,10 @@
                 <text class="deadline-text">{{assignment.deadlineText}}</text>
               </view>
             </view>
-        <view class="assignment-item__status">
-              <text class="status-tag status-tag--submitted" wx:if="{{assignment.hasSubmitted}}">已提交</text>
-              <text class="status-tag status-tag--overdue" wx:if="{{assignment.isOverdue && !assignment.hasSubmitted}}">已过期</text>
-              <text class="status-tag status-tag--pending" wx:if="{{!assignment.hasSubmitted && !assignment.isOverdue}}">未提交</text>
+            <view class="assignment-item__status">
+              <text class="status-tag status-tag--submitted" wx:if="{{assignment.submitStatusText === '已提交'}}">已提交</text>
+              <text class="status-tag status-tag--overdue" wx:if="{{assignment.submitStatusText === '迟交'}}">迟交</text>
+              <text class="status-tag status-tag--pending" wx:if="{{assignment.submitStatusText === '未提交'}}">未提交</text>
             </view>
             <view class="assignment-item__arrow">
               <text class="arrow-icon">></text>

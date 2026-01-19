@@ -1,9 +1,9 @@
 <t-navbar title="班级成员" left-arrow />
 <view class="page class-members page-with-navbar">
   <view class="class-members__content">
-    <!-- 管理员：添加成员按钮 -->
+    <!-- 管理员：添加成员和设置管理员按钮 -->
     <view class="class-members__actions" wx:if="{{isAdmin}}">
-      <t-button theme="primary" block bindtap="showAddMemberModal">
+      <t-button theme="primary" block bindtap="showAddMemberModal" style="margin-bottom: 20rpx;">
         添加成员
       </t-button>
     </view>
@@ -11,10 +11,55 @@
     <t-cell-group theme="card">
       <t-cell title="班级成员" note="{{memberList.length}}人" />
       <block wx:for="{{memberList}}" wx:for-item="item" wx:key="userId">
-        <t-cell
-          title="{{item.name || '未设置名称'}}"
-          note="{{item.studentNo || '未填写学号'}}"
-        />
+        <t-swipe-cell
+          right-width="320"
+          disabled="{{!(isAdmin && !item.isCreator && !(item.userId && currentUserId && item.userId === currentUserId) && !(item.openid && currentOpenid && item.openid === currentOpenid))}}"
+        >
+          <view class="member-cell-wrapper">
+            <t-cell
+              title="{{item.name || '未设置名称'}}"
+              note="{{item.role === 'admin' ? '' : (item.studentNo || '未填写学号')}}"
+            />
+            <view wx:if="{{item.role === 'admin'}}" class="admin-badge">管理员</view>
+          </view>
+
+          <!-- 左滑操作区域 -->
+          <view
+            slot="right"
+            class="swipe-actions"
+            wx:if="{{isAdmin && !item.isCreator && !(item.userId && currentUserId && item.userId === currentUserId) && !(item.openid && currentOpenid && item.openid === currentOpenid)}}"
+          >
+            <t-button
+              wx:if="{{item.role !== 'admin'}}"
+              size="small"
+              variant="text"
+              class="btn-transparent-primary swipe-btn"
+              catchtap="onSetAdminBtn"
+              data-index="{{index}}"
+            >
+              设为管理员
+            </t-button>
+            <t-button
+              wx:if="{{item.role === 'admin'}}"
+              size="small"
+              variant="text"
+              class="btn-transparent-danger swipe-btn"
+              catchtap="onUnsetAdminBtn"
+              data-index="{{index}}"
+            >
+              删除管理员
+            </t-button>
+            <t-button
+              size="small"
+              variant="text"
+              class="btn-transparent-danger swipe-btn"
+              catchtap="onKickMemberBtn"
+              data-index="{{index}}"
+            >
+              删除成员
+            </t-button>
+          </view>
+        </t-swipe-cell>
       </block>
     </t-cell-group>
   </view>
@@ -36,13 +81,43 @@
             maxlength="20"
           />
         </view>
-        <view class="form-tip">通过学号搜索并添加成员到班级</view>
+        
         <view class="add-member-popup__actions">
           <t-button theme="default" block bindtap="closeAddMemberPopup" style="margin-bottom: 16rpx;">
             取消
           </t-button>
           <t-button theme="primary" block bindtap="searchAndAddMember" loading="{{searching}}">
             搜索并添加
+          </t-button>
+        </view>
+      </view>
+    </view>
+  </t-popup>
+
+  <!-- 设置管理员弹窗 -->
+  <t-popup visible="{{showSetAdminPopup}}" bind:visible-change="onSetAdminPopupChange" placement="bottom">
+    <view class="add-member-popup">
+      <view class="add-member-popup__header">
+        <text class="add-member-title">增加管理员</text>
+        <t-icon name="close" size="32rpx" bindtap="closeSetAdminPopup" />
+      </view>
+      <view class="add-member-popup__body">
+        <view class="form-item">
+          <t-input
+            label="学号"
+            placeholder="请输入学号/工号搜索"
+            value="{{adminStudentNo}}"
+            bindchange="onAdminStudentNoInput"
+            maxlength="20"
+          />
+        </view>
+        
+        <view class="add-member-popup__actions">
+          <t-button theme="default" block bindtap="closeSetAdminPopup" style="margin-bottom: 16rpx;">
+            取消
+          </t-button>
+          <t-button theme="primary" block bindtap="setClassAdmin" loading="{{settingAdmin}}">
+            设置为管理员
           </t-button>
         </view>
       </view>

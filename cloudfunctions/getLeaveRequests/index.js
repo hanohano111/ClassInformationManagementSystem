@@ -42,18 +42,19 @@ exports.main = async (event) => {
       userMap[u.openid] = u;
     });
 
-    // 组装返回数据，解密学号
+    // 组装返回数据，解密姓名与学号
     const leaveList = (leaveRes.data || []).map((leave) => {
       const user = userMap[leave.openid] || {};
       
       let userData = {
         name: user.name || leave.studentName || '',
+        name_iv: user.name_iv,
         studentNo: user.studentNo || '',
         studentNo_iv: user.studentNo_iv,
       };
 
-      // 解密学号
-      userData = decryptFieldsFromDB(userData, ['studentNo']);
+      // 解密姓名与学号
+      userData = decryptFieldsFromDB(userData, ['name', 'studentNo']);
 
       return {
         id: leave._id,
@@ -64,7 +65,7 @@ exports.main = async (event) => {
         status: leave.status || 0, // 0: 待审批, 1: 已通过, 2: 已拒绝
         comment: leave.comment || '',
         attachments: leave.attachments || [],
-        studentName: userData.name,
+        studentName: userData.name || '',
         studentNo: userData.studentNo || '',
         createdAt: leave.createdAt,
         updatedAt: leave.updatedAt,

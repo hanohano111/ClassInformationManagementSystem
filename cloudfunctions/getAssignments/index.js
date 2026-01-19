@@ -1,4 +1,5 @@
 const cloud = require('wx-server-sdk');
+const { decryptFieldsFromDB } = require('./common/aes');
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
@@ -37,14 +38,28 @@ exports.main = async (event) => {
     submissionRes.data.forEach((sub) => {
       // 确保 assignmentId 是字符串
       const assignmentId = String(sub.assignmentId || '');
-      submissionMap[assignmentId] = true;
+      submissionMap[assignmentId] = {
+        hasSubmitted: true,
+        submittedAt: sub.submittedAt || sub.createdAt || null,
+      };
     });
 
     const assignmentList = (assignmentRes.data || []).map((assignment) => {
       // 确保 _id 转换为字符串后再匹配
       const assignmentId = String(assignment._id || '');
-      const hasSubmitted = Boolean(submissionMap[assignmentId]);
+      const submissionInfo = submissionMap[assignmentId] || { hasSubmitted: false, submittedAt: null };
+      const hasSubmitted = Boolean(submissionInfo.hasSubmitted);
+      const submittedAt = submissionInfo.submittedAt;
       const isOverdue = assignment.deadline && Date.now() > assignment.deadline;
+      const isLate =
+        hasSubmitted && assignment.deadline && submittedAt && submittedAt > assignment.deadline;
+
+      // 解密布置人姓名
+      let creator = {
+        name: assignment.creatorName || '',
+        name_iv: assignment.creatorName_iv,
+      };
+      creator = decryptFieldsFromDB(creator, ['name']);
       
       return {
         id: assignment._id,
@@ -53,12 +68,14 @@ exports.main = async (event) => {
         attachments: assignment.attachments || [],
         courseId: assignment.courseId,
         creatorId: assignment.creatorId,
-        creatorName: assignment.creatorName || '',
+        creatorName: creator.name || '',
         deadline: assignment.deadline,
         createdAt: assignment.createdAt,
         updatedAt: assignment.updatedAt,
         hasSubmitted: hasSubmitted,
+        submittedAt: submittedAt,
         isOverdue: isOverdue,
+        submitStatusText: hasSubmitted ? (isLate ? '迟交' : '已交') : '未交',
       };
     });
 

@@ -37,3 +37,57 @@
     }
   }
 }
+
+.member-cell-wrapper {
+  position: relative;
+  
+  .admin-badge {
+    position: absolute;
+    right: 32rpx;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-block;
+    padding: 4rpx 12rpx;
+    font-size: 24rpx;
+    color: #ff4d4f;
+    background-color: #fff1f0;
+    border: 1px solid #ffccc7;
+    border-radius: 4rpx;
+    line-height: 1.5;
+    z-index: 1;
+  }
+}
+
+.member-actions {
+  /* 已废弃，保留占位防止引用报错 */
+}
+
+.btn-inline {
+  padding: 0;
+}
+
+/* 蓝色高透明（primary），无边框 */
+.btn-transparent-primary {
+  background-color: rgba(24, 144, 255, 0.14) !important;
+  color: #1890ff !important;
+  border: 0 !important;
+}
+
+/* 红色高透明（danger），无边框 */
+.btn-transparent-danger {
+  background-color: rgba(255, 77, 79, 0.14) !important;
+  color: #ff4d4f !important;
+  border: 0 !important;
+}
+
+.swipe-actions {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 24rpx;
+  gap: 12rpx;
+}
+
+.swipe-btn {
+  padding: 0 16rpx;
+}

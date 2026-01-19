@@ -114,10 +114,33 @@ Page({
     return (bytes / (1024 * 1024)).toFixed(2) + 'MB';
   },
 
+  async getTempUrl(fileID) {
+    try {
+      const res = await wx.cloud.getTempFileURL({ fileList: [fileID] });
+      const fileInfo = res?.fileList?.[0];
+      if (fileInfo?.tempFileURL) return fileInfo.tempFileURL;
+
+      if (fileInfo?.errMsg && String(fileInfo.errMsg).includes('STORAGE_EXCEED_AUTHORITY')) {
+        console.warn('[请假详情] getTempFileURL 无权限，改用云函数:', fileInfo);
+        const cfRes = await wx.cloud.callFunction({
+          name: 'getFileTempUrl',
+          data: { fileID },
+        });
+        const r = cfRes?.result || {};
+        if (r.code === 200 && r.data?.tempFileURL) return r.data.tempFileURL;
+      }
+    } catch (err) {
+      console.error('[请假详情] 获取临时链接失败', err);
+    }
+    return '';
+  },
+
   /** 预览附件 */
   previewAttachment(e) {
-    const { url, name } = e.currentTarget.dataset;
-    if (!url) {
+    const { url, name, fileid } = e.currentTarget.dataset;
+    const rawUrl = url || fileid;
+    console.log('[请假详情] 点击附件:', { name, url, fileid, rawUrl });
+    if (!rawUrl) {
       wx.showToast({ title: '附件链接无效', icon: 'none' });
       return;
     }
@@ -125,35 +148,85 @@ Page({
     // 如果是图片，使用预览图片
     const imageExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
     const isImage = imageExts.some((ext) => name.toLowerCase().endsWith(ext));
+    const isCloudFile = rawUrl.startsWith('cloud://');
 
-    if (isImage) {
-      wx.previewImage({
-        urls: [url],
-        current: url,
-      });
-    } else {
-      // 其他文件类型，下载或打开
+    const previewOrDownload = async () => {
+      if (isImage) {
+        const tempUrl = isCloudFile ? await this.getTempUrl(rawUrl) : rawUrl;
+        if (!tempUrl) throw new Error('无法获取附件链接');
+        wx.previewImage({
+          urls: [tempUrl],
+          current: tempUrl,
+        });
+        return;
+      }
+
       wx.showModal({
         title: '下载附件',
         content: `确定要下载 ${name} 吗？`,
-        success: (res) => {
-          if (res.confirm) {
-            wx.downloadFile({
-              url: url,
-              success: (downloadRes) => {
-                wx.openDocument({
-                  filePath: downloadRes.tempFilePath,
-                  showMenu: true,
-                });
-              },
-              fail: () => {
-                wx.showToast({ title: '下载失败', icon: 'none' });
+        success: async (res) => {
+          if (!res.confirm) return;
+          try {
+            let filePath = '';
+            if (isCloudFile) {
+              try {
+                const downloadRes = await wx.cloud.downloadFile({ fileID: rawUrl });
+                filePath = downloadRes.tempFilePath;
+              } catch (err) {
+                console.error('[请假详情] cloud.downloadFile 失败，尝试临时链接:', err);
+                const tempUrl = await this.getTempUrl(rawUrl);
+                if (!tempUrl) throw err;
+                const dl = await wx.downloadFile({ url: tempUrl });
+                filePath = dl.tempFilePath || dl.filePath;
+              }
+            } else {
+              const dl = await wx.downloadFile({ url: rawUrl });
+              filePath = dl.tempFilePath || dl.filePath;
+            }
+
+            if (!filePath) throw new Error('无法获取文件');
+            const fileType = this.getFileType(name, rawUrl, filePath);
+            if (!fileType) {
+              wx.showToast({ title: '不支持的文件类型', icon: 'none' });
+              return;
+            }
+            wx.openDocument({
+              filePath,
+              fileType,
+              showMenu: true,
+              fail: (err) => {
+                console.error('[请假详情] openDocument 失败:', err);
+                wx.showToast({ title: '打开失败', icon: 'none' });
               },
             });
+          } catch (err) {
+            console.error('[请假详情] 下载失败:', err);
+            wx.showToast({ title: '下载失败', icon: 'none' });
           }
         },
       });
-    }
+    };
+
+    previewOrDownload().catch(() => {
+      wx.showToast({ title: '预览失败', icon: 'none' });
+    });
+  },
+
+  /** 根据文件名/链接推断 fileType（仅返回小程序 openDocument 官方支持的类型） */
+  getFileType(name = '', url = '', path = '') {
+    const lower = (name || url || path || '').toLowerCase();
+    const mapping = [
+      { key: '.pdf', type: 'pdf' },
+      { key: '.docx', type: 'docx' },
+      { key: '.doc', type: 'doc' },
+      { key: '.pptx', type: 'pptx' },
+      { key: '.ppt', type: 'ppt' },
+      { key: '.xlsx', type: 'xlsx' },
+      { key: '.xls', type: 'xls' },
+    ];
+    // txt 在官方文档中未列入支持类型，这里不再强行映射，返回空交由上层提示“不支持”
+    const hit = mapping.find((m) => lower.includes(m.key));
+    return hit ? hit.type : '';
   },
 
   /** 显示审批弹窗 */

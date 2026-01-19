@@ -3,7 +3,6 @@
   <view class="info-edit__avatar">
     <t-avatar size="220rpx" image="{{personInfo.avatar || personInfo.image}}" />
     <view class="avatar-upload" bindtap="onAvatarChange">
-      <t-icon name="camera" size="32rpx" color="#fff" />
       <text class="avatar-upload__text">更换头像</text>
     </view>
   </view>
@@ -12,54 +11,23 @@
     <t-input bind:change="onNameChange" borderless placeholder="请输入用户名" slot="note" value="{{personInfo.name}}" />
   </t-cell>
   
-  <t-cell class="info-edit__cell" title="学号">
-    <t-input bind:change="onStudentNoChange" borderless placeholder="请输入学号" slot="note" value="{{personInfo.studentNo}}" />
+  <t-cell class="info-edit__cell" title="学号/工号">
+    <t-input bind:change="onStudentNoChange" borderless placeholder="请输入学号/工号" slot="note" value="{{personInfo.studentNo}}" />
   </t-cell>
-  <t-cell class="info-edit__cell" title="性别">
-    <t-radio-group
-      bind:change="onGenderChange"
-      borderless
-      defaultValue="{{personInfo.gender}}"
-      options="{{genderOptions}}"
-      slot="note"
-      t-class="info-edit__gender"
-      value="{{personInfo.gender}}"
-    />
+  
+  <t-cell class="info-edit__cell" title="学院">
+    <t-input bind:change="onCollegeChange" borderless placeholder="请输入学院" slot="note" value="{{personInfo.college}}" />
   </t-cell>
-  <t-cell arrow bind:click="showPicker" data-mode="birth" note="{{personInfo.birth || ''}}" title="生日" />
-  <t-cell class="info-edit__cell" title="个人简介">
-    <t-textarea
-      bind:blur="onIntroductionChange"
-      disableDefaultPadding="{{true}}"
-      indicator
-      maxcharacter="50"
-      placeholder="请输入个人简介"
-      slot="note"
-      t-class="info-edit__introduction"
-      value="{{personInfo.introduction}}"
-    />
+  
+  <t-cell class="info-edit__cell" title="专业">
+    <t-input bind:change="onMajorChange" borderless placeholder="请输入专业" slot="note" value="{{personInfo.major}}" />
+  </t-cell>
+  
+  <t-cell class="info-edit__cell" title="手机号">
+    <t-input bind:change="onPhoneChange" borderless placeholder="请输入手机号" slot="note" value="{{personInfo.phone}}" type="number" maxlength="11" />
   </t-cell>
 </view>
 
 <view class="info-edit__save">
   <t-button bind:tap="onSaveInfo" block size="medium" theme="primary">保存</t-button>
 </view>
-
-<t-date-time-picker
-  auto-close
-  bind:cancel="hidePicker"
-  bind:change="onPickerChange"
-  cancelBtn="取消"
-  confirmBtn="确认"
-  data-mode="birth"
-  defaultValue="{{personInfo.birth}}"
-  end="{{birthEnd}}"
-  filter="{{birthFilter}}"
-  format="YYYY-MM-DD"
-  mode="date"
-  popup-props="{{ { usingCustomNavbar: true } }}"
-  start="{{birthStart}}"
-  title="选择生日"
-  value="{{personInfo.birth}}"
-  visible="{{birthVisible}}"
-/>

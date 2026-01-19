@@ -19,10 +19,11 @@ exports.main = async (event) => {
 
     const user = userRes.data[0];
 
-    // 从数据库读取后，解密敏感字段（phone）
+    // 从数据库读取后，解密所有加密字段（除了 avatar）
     let userData = {
       userId: user._id,
       name: user.name || '',
+      name_iv: user.name_iv,
       avatar: user.avatar || '',
       role: user.role || 0,
       phone: user.phone || '',
@@ -31,15 +32,16 @@ exports.main = async (event) => {
       studentNo_iv: user.studentNo_iv,
       teacherNo: user.teacherNo || '',
       teacherNo_iv: user.teacherNo_iv,
-      gender: user.gender || 0,
-      birth: user.birth || '',
-      introduction: user.introduction || user.brief || '',
+      college: user.college || '',
+      college_iv: user.college_iv,
+      major: user.major || '',
+      major_iv: user.major_iv,
       createdAt: user.createdAt || 0,
       updatedAt: user.updatedAt || 0,
     };
 
-    // 解密敏感字段
-    userData = decryptFieldsFromDB(userData, ['phone', 'studentNo', 'teacherNo']);
+    // 解密所有加密字段（除了 avatar）
+    userData = decryptFieldsFromDB(userData, ['name', 'studentNo', 'college', 'major', 'phone', 'teacherNo']);
 
     return {
       code: 200,

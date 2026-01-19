@@ -1,8 +1,10 @@
 const cloud = require('wx-server-sdk');
+const { decryptFieldsFromDB } = require('./common/aes');
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const leaveRequests = db.collection('leave_requests');
+const users = db.collection('users');
 
 exports.main = async (event) => {
   try {
@@ -18,6 +20,23 @@ exports.main = async (event) => {
       return { code: 404, success: false, message: '请假不存在' };
     }
 
+    // 取用户信息以解密姓名/学号
+    let userData = {};
+    if (leaveRes.data && leaveRes.data.openid) {
+      const userRes = await users.where({ openid: leaveRes.data.openid }).get();
+      if (userRes.data && userRes.data[0]) {
+        userData = decryptFieldsFromDB(
+          {
+            name: userRes.data[0].name || leaveRes.data.studentName || '',
+            name_iv: userRes.data[0].name_iv,
+            studentNo: userRes.data[0].studentNo || '',
+            studentNo_iv: userRes.data[0].studentNo_iv,
+          },
+          ['name', 'studentNo'],
+        );
+      }
+    }
+
     const leave = {
       id: leaveRes.data._id,
       reason: leaveRes.data.reason || '',
@@ -27,7 +46,8 @@ exports.main = async (event) => {
       status: leaveRes.data.status || 0,
       comment: leaveRes.data.comment || '',
       attachments: leaveRes.data.attachments || [],
-      studentName: leaveRes.data.studentName || '',
+      studentName: userData.name || leaveRes.data.studentName || '',
+      studentNo: userData.studentNo || '',
       courseId: leaveRes.data.courseId,
       createdAt: leaveRes.data.createdAt,
       updatedAt: leaveRes.data.updatedAt,

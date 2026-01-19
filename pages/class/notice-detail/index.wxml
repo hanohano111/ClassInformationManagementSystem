@@ -21,7 +21,13 @@
       <view class="attachments-title">附件（{{notice.attachments.length}}）</view>
       <view class="attachments-list">
         <block wx:for="{{notice.attachments}}" wx:for-item="item" wx:key="index">
-          <view class="attachment-item" bindtap="previewAttachment" data-url="{{item.url}}" data-name="{{item.name}}">
+          <view
+            class="attachment-item"
+            bindtap="previewAttachment"
+            data-url="{{item.url || item.fileID || item.fileId || item.tempFileURL}}"
+            data-fileid="{{item.fileID || item.fileId}}"
+            data-name="{{item.name}}"
+          >
             <t-icon name="attach" size="32rpx" color="#0052d9" />
             <view class="attachment-info">
               <view class="attachment-name">{{item.name}}</view>

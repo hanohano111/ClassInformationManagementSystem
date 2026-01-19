@@ -51,86 +51,12 @@ exports.main = async (event) => {
       const member = memberMap[courseId];
       const isAdmin = member.role === 'admin' || course.creatorOpenid === openid;
 
-      // 管理员消息：作业通知 - 显示当前用户的提交状态（不再显示其他成员的提交情况）
-      if (isAdmin) {
-        // 获取该班级的所有作业
-        const assignmentRes = await assignments
-          .where({ courseId })
-          .orderBy('createdAt', 'desc')
-          .get();
+      // 该班级总成员数（用于“情况”统计）
+      const membersRes = await courseMembers.where({ courseId }).get();
+      const totalMembers = (membersRes.data || []).length;
 
-        for (const assignment of assignmentRes.data) {
-          // 检查当前管理员用户是否已提交
-          const submissionRes = await assignmentSubmissions
-            .where({
-              assignmentId: assignment._id,
-              openid: openid,
-            })
-            .get();
-
-          const hasSubmitted = submissionRes.data.length > 0;
-          const statusText = hasSubmitted ? '已提交' : '未提交';
-          
-          // 所有作业都显示通知，包含当前用户的提交状态
-          messages.push({
-            type: 'assignment_notice',
-            courseId: courseId,
-            courseName: course.name || '未知班级',
-            title: `作业：${assignment.title}`,
-            content: `状态：${statusText}`, // 只显示当前用户的提交状态
-            timestamp: assignment.createdAt,
-            relatedId: assignment._id,
-            relatedType: 'assignment',
-          });
-        }
-
-        // 管理员消息：签到情况（新生成的签到码）
-        const checkInCodeRes = await checkInCodes
-          .where({
-            courseId: courseId,
-            createdAt: db.command.gte(oneWeekAgo),
-          })
-          .orderBy('createdAt', 'desc')
-          .get();
-
-        for (const codeData of checkInCodeRes.data) {
-          messages.push({
-            type: 'checkin',
-            courseId: courseId,
-            courseName: course.name || '未知班级',
-            title: '签到情况',
-            content: codeData.note || `签到码：${codeData.code}`,
-            timestamp: codeData.createdAt,
-            relatedId: codeData.code,
-            relatedType: 'checkin',
-          });
-        }
-
-        // 管理员消息：请假申请（待审批）
-        const leaveRes = await leaveRequests
-          .where({
-            courseId: courseId,
-            status: 0, // 待审批
-          })
-          .orderBy('createdAt', 'desc')
-          .get();
-
-        for (const leave of leaveRes.data) {
-          messages.push({
-            type: 'leave_request',
-            courseId: courseId,
-            courseName: course.name || '未知班级',
-            title: `请假申请：${leave.reason || '未填写原因'}`,
-            content: `${leave.studentName || '未知用户'} 申请请假`,
-            timestamp: leave.createdAt,
-            relatedId: leave._id,
-            relatedType: 'leave',
-          });
-        }
-      }
-
-      // 成员消息（包括管理员）：签到通知
-      const checkInCodeNoticeRes = await checkInCodes
+      // 近一周的签到码
+      const checkInCodeRes = await checkInCodes
         .where({
           courseId: courseId,
           createdAt: db.command.gte(oneWeekAgo),
@@ -138,28 +64,44 @@ exports.main = async (event) => {
         .orderBy('createdAt', 'desc')
         .get();
 
-      for (const codeData of checkInCodeNoticeRes.data) {
-        // 检查是否已签到
-        const recordRes = await checkInRecords
-          .where({
-            courseId: courseId,
-            checkInCode: codeData.code,
-            openid: openid,
-          })
-          .get();
-
-        if (recordRes.data.length === 0) {
-          // 未签到，显示通知
+      for (const codeData of checkInCodeRes.data) {
+        if (isAdmin) {
+          // 管理员看到签到“情况”：已签到人数/总人数
+          const countRes = await checkInRecords
+            .where({ courseId: courseId, checkInCode: codeData.code })
+            .count();
+          const checkedInCount = countRes.total || 0;
           messages.push({
-            type: 'checkin_notice',
+            type: 'checkin',
             courseId: courseId,
             courseName: course.name || '未知班级',
-            title: '签到通知',
-            content: codeData.note || `签到码：${codeData.code}`,
+            title: '签到情况',
+            content: `已签到：${checkedInCount}/${totalMembers}${codeData.note ? `｜${codeData.note}` : ''}`,
             timestamp: codeData.createdAt,
             relatedId: codeData.code,
             relatedType: 'checkin',
           });
+        } else {
+          // 学生只提醒“未签到”
+          const recordRes = await checkInRecords
+            .where({
+              courseId: courseId,
+              checkInCode: codeData.code,
+              openid: openid,
+            })
+            .get();
+          if ((recordRes.data || []).length === 0) {
+            messages.push({
+              type: 'checkin_notice',
+              courseId: courseId,
+              courseName: course.name || '未知班级',
+              title: '签到通知',
+              content: codeData.note || `签到码：${codeData.code}`,
+              timestamp: codeData.createdAt,
+              relatedId: codeData.code,
+              relatedType: 'checkin',
+            });
+          }
         }
       }
 
@@ -185,8 +127,8 @@ exports.main = async (event) => {
         });
       }
 
-      // 成员消息（包括管理员）：作业通知 - 显示当前用户的提交状态
-      const assignmentNoticeRes = await assignments
+      // 近一周的作业
+      const assignmentRes = await assignments
         .where({
           courseId: courseId,
           createdAt: db.command.gte(oneWeekAgo),
@@ -194,29 +136,88 @@ exports.main = async (event) => {
         .orderBy('createdAt', 'desc')
         .get();
 
-      for (const assignment of assignmentNoticeRes.data) {
-        // 检查当前用户是否已提交
-        const submissionRes = await assignmentSubmissions
-          .where({
-            assignmentId: assignment._id,
-            openid: openid,
-          })
-          .get();
+      for (const assignment of assignmentRes.data) {
+        if (isAdmin) {
+          // 管理员看到作业“情况”：已交人数/总人数
+          const countRes = await assignmentSubmissions.where({ assignmentId: assignment._id }).count();
+          const submittedCount = countRes.total || 0;
+          messages.push({
+            type: 'assignment_notice',
+            courseId: courseId,
+            courseName: course.name || '未知班级',
+            title: `作业：${assignment.title}`,
+            content: `已交：${submittedCount}/${totalMembers}`,
+            timestamp: assignment.createdAt,
+            relatedId: assignment._id,
+            relatedType: 'assignment',
+          });
+        } else {
+          // 学生看到自己的提交状态（已交/迟交/未交）
+          const submissionRes = await assignmentSubmissions
+            .where({
+              assignmentId: assignment._id,
+              openid: openid,
+            })
+            .get();
+          const hasSubmitted = (submissionRes.data || []).length > 0;
+          const isOverdue = assignment.deadline && now > assignment.deadline;
+          const statusText = hasSubmitted ? '已交' : (isOverdue ? '迟交' : '未交');
+          messages.push({
+            type: 'assignment_notice',
+            courseId: courseId,
+            courseName: course.name || '未知班级',
+            title: `作业：${assignment.title}`,
+            content: `状态：${statusText}`,
+            timestamp: assignment.createdAt,
+            relatedId: assignment._id,
+            relatedType: 'assignment',
+          });
+        }
+      }
 
-        const hasSubmitted = submissionRes.data.length > 0;
-        const statusText = hasSubmitted ? '已提交' : '未提交';
-        
-        // 所有作业都显示通知，包含当前用户的提交状态
-        messages.push({
-          type: 'assignment_notice',
-          courseId: courseId,
-          courseName: course.name || '未知班级',
-          title: `作业：${assignment.title}`,
-          content: `状态：${statusText}`, // 只显示当前用户的提交状态
-          timestamp: assignment.createdAt,
-          relatedId: assignment._id,
-          relatedType: 'assignment',
-        });
+      // 请假：管理员看到待审批；学生看到自己的审批结果/状态变化
+      if (isAdmin) {
+        const leaveRes = await leaveRequests
+          .where({
+            courseId: courseId,
+            status: 0, // 待审批
+          })
+          .orderBy('createdAt', 'desc')
+          .get();
+        for (const leave of leaveRes.data) {
+          messages.push({
+            type: 'leave_request',
+            courseId: courseId,
+            courseName: course.name || '未知班级',
+            title: `请假待审批：${leave.reason || '未填写原因'}`,
+            content: `${leave.studentName || '未知用户'} 提交请假申请`,
+            timestamp: leave.createdAt,
+            relatedId: leave._id,
+            relatedType: 'leave',
+          });
+        }
+      } else {
+        const myLeaveRes = await leaveRequests
+          .where({
+            courseId: courseId,
+            openid: openid,
+            updatedAt: db.command.gte(oneWeekAgo),
+          })
+          .orderBy('updatedAt', 'desc')
+          .get();
+        for (const leave of (myLeaveRes.data || [])) {
+          const statusText = leave.status === 1 ? '已通过' : (leave.status === 2 ? '已拒绝' : '待审批');
+          messages.push({
+            type: 'leave_request',
+            courseId: courseId,
+            courseName: course.name || '未知班级',
+            title: `请假：${statusText}`,
+            content: leave.reason || '',
+            timestamp: leave.updatedAt || leave.createdAt,
+            relatedId: leave._id,
+            relatedType: 'leave',
+          });
+        }
       }
     }
 

@@ -1,4 +1,5 @@
 const cloud = require('wx-server-sdk');
+const { decryptFieldsFromDB } = require('./common/aes');
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
@@ -22,10 +23,20 @@ exports.main = async (event) => {
       return { code: 400, success: false, message: '请假日期不能为空' };
     }
 
-    // 获取用户信息
+    // 获取用户信息并解密姓名（避免存入密文）
     const userRes = await users.where({ openid }).get();
-    const studentName = userRes.data.length > 0 ? userRes.data[0].name || '' : '';
-    const userId = userRes.data.length > 0 ? userRes.data[0]._id : '';
+    const rawUser = userRes.data.length > 0 ? userRes.data[0] : {};
+    const decryptedUser = rawUser.name || rawUser.name_iv
+      ? decryptFieldsFromDB(
+          {
+            name: rawUser.name || '',
+            name_iv: rawUser.name_iv,
+          },
+          ['name'],
+        )
+      : { name: rawUser.name || '' };
+    const studentName = decryptedUser.name || '';
+    const userId = rawUser ? rawUser._id : '';
 
     // 将日期转换为当天的开始时间（00:00:00）和结束时间（23:59:59）
     const dateObj = new Date(date);
