@@ -29,9 +29,9 @@ export default {
 };
 
 
-### 2. API 加密配置 (`config/api-encryption-config.js`)
+### 2. 加密配置（现状说明）
 
-已预配置所有需要加密的接口和字段，可根据实际需求修改。
+当前项目已移除 `api/request.js` 与 `config/api-encryption-config.js` 的 HTTP 接口加密方案，业务数据交互以 **微信云函数** 为主。前端加密主要通过 `utils/crypto.js` 的 `encryptFields` 完成，云函数侧通过各模块 `common/aes.js` 解密并在写库前进行二次加密存储（如需）。
 
 ---
 
@@ -39,17 +39,7 @@ export default {
 
 ### 1. 自动加密（推荐）
 
-使用 `api/request.js` 发送请求时，会自动根据配置加密/解密：
-
-javascript
-import request from '~/api/request';
-
-// 提交作业（content 和 fileMetadata 会自动加密）
-request('/api/assignment/submit', 'POST', {
-  assignmentId: 101,
-  content: '作业内容', // 自动加密
-  fileMetadata: JSON.stringify({ fileName: '作业.pdf' }), // 自动加密
-});
+当前项目推荐在调用云函数前进行字段级加密（以个人信息编辑为例），再调用 `wx.cloud.callFunction` 发送到云函数。
 
 
 ### 2. 手动加密

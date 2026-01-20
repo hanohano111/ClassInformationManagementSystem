@@ -37,32 +37,7 @@ async function getEncryptionKey() {
     // ignore
   }
 
-  // 方案1：从后端获取临时密钥（推荐）
-  try {
-    const tokenString = wx.getStorageSync('encryption_key');
-    const keyExpireTime = wx.getStorageSync('encryption_key_expire');
-    
-    // 检查密钥是否过期
-    if (tokenString && keyExpireTime && new Date(keyExpireTime) > new Date()) {
-      return tokenString;
-    }
-    
-    // 从后端获取新密钥
-    // eslint-disable-next-line
-    const request = require('../api/request').default || require('../api/request');
-    const res = await request('/api/system/encryption-key', 'GET');
-    
-    if (res.code === 200 && res.data && res.data.key) {
-      // 存储密钥和过期时间
-      wx.setStorageSync('encryption_key', res.data.key);
-      wx.setStorageSync('encryption_key_expire', res.data.expireTime);
-      return res.data.key;
-    }
-  } catch (error) {
-    console.warn('获取加密密钥失败，使用配置密钥', error);
-  }
-  
-  // 方案2：从配置获取（开发环境）
+  // 方案：从配置获取（开发环境）
   try {
     // eslint-disable-next-line
     const configModule = require('../config');

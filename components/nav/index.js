@@ -77,10 +77,5 @@ Component({
       }
     },
 
-    searchTurn() {
-      wx.navigateTo({
-        url: `/pages/search/index`,
-      });
-    },
   },
 });

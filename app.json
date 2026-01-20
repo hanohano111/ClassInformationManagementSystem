@@ -5,18 +5,8 @@
   },
   "subpackages": [
     {
-      "root": "pages/search",
-      "name": "search",
-      "pages": ["index"]
-    },
-    {
       "root": "pages/my/info-edit",
       "name": "edit",
-      "pages": ["index"]
-    },
-    {
-      "root": "pages/chat",
-      "name": "chat",
       "pages": ["index"]
     },
     {
@@ -25,31 +15,14 @@
       "pages": ["login"]
     },
     {
-      "root": "pages/dataCenter",
-      "name": "dataCenter",
-      "pages": ["index"]
-    },
-    {
-      "root": "pages/setting",
-      "name": "setting",
-      "pages": ["index"]
-    },
-    {
-      "root": "pages/release",
-      "name": "release",
-      "pages": ["index"]
-    },
-    {
       "root": "pages/class",
       "name": "class",
       "pages": [
         "create/index",
         "settings/index",
         "detail/index",
-        "course/index",
         "attendance/index",
         "info/index",
-        "admin/index",
         "members/index",
         "notices/index",
         "notice-detail/index",

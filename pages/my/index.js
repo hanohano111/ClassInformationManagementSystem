@@ -1,4 +1,3 @@
-import request from '~/api/request';
 import useToastBehavior from '~/behaviors/useToast';
 
 Page({

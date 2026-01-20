@@ -1,6 +1,4 @@
 // pages/message/index.js
-import request from '~/api/request';
-
 Page({
   data: {
     classList: [],

@@ -21,10 +21,7 @@
 ├── utils/
 │   └── crypto.js                    # AES加密工具模块
 ├── config/
-│   ├── api-encryption-config.js    # API加密配置映射
 │   └── index.js                     # 配置文件
-├── api/
-│   └── request.js                   # 请求拦截器（自动加密/解密）
 └── README-ENCRYPTION.md             # 本文档
 
 
@@ -59,17 +56,7 @@ export default {
 
 ### 自动加密（推荐）
 
-使用 `api/request.js` 发送请求时，会自动根据配置加密/解密：
-
-javascript
-import request from '~/api/request';
-
-// 提交作业（content 和 fileMetadata 会自动加密）
-request('/api/assignment/submit', 'POST', {
-  assignmentId: 101,
-  content: '作业内容', // ✅ 自动加密
-  fileMetadata: JSON.stringify({ fileName: '作业.pdf' }), // ✅ 自动加密
-});
+当前项目以 **云函数** 为主进行前后端交互，推荐在调用云函数前使用 `utils/crypto.js` 的 `encryptFields` 对敏感字段加密（例如个人信息编辑场景），云函数侧再解密校验并进行二次加密存储（如需）。
 
 
 ### 手动加密

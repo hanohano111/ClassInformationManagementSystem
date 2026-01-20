@@ -131,16 +131,9 @@ Page({
 
   /** 进入管理员设置页面 */
   goToAdminSettings() {
-    if (!this.data.isAdmin) {
-      wx.showToast({
-        title: '无权限访问',
-        icon: 'none',
-      });
-      return;
-    }
-    
-    wx.navigateTo({
-      url: `/pages/class/admin/index?classId=${this.data.classId}`,
+    wx.showToast({
+      title: '该演示页已移除',
+      icon: 'none',
     });
   },
 });
