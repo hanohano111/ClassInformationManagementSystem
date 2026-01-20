@@ -12,29 +12,8 @@
  * }
  */
 const encryptionConfig = {
-  // 账号密码登录
-  '/api/auth/password-login': {
-    encryptFields: ['password'],
-    decryptFields: [],
-  },
-  
-  // 注册
-  '/api/auth/register': {
-    encryptFields: ['password', 'phone'],
-    decryptFields: [],
-  },
-  
-  // 重置密码
-  '/api/auth/reset-password': {
-    encryptFields: ['newPassword'],
-    decryptFields: [],
-  },
-  
-  // 身份绑定
-  '/api/auth/bind-identity': {
-    encryptFields: ['studentNo', 'teacherNo', 'phone'],
-    decryptFields: [],
-  },
+  // 注：本项目实际登录采用 OpenID + 云函数方式，不使用“账号密码登录/注册/找回密码”这类 HTTP 接口。
+  // 如需扩展为独立 HTTP 后端，可在此处恢复相关接口的加密配置。
   
   // 更新个人信息
   '/api/user/info': {

@@ -25,21 +25,6 @@
       "pages": ["login"]
     },
     {
-      "root": "pages/loginCode",
-      "name": "loginCode",
-      "pages": ["loginCode"]
-    },
-    {
-      "root": "pages/register",
-      "name": "register",
-      "pages": ["register"]
-    },
-    {
-      "root": "pages/forgot-password",
-      "name": "forgotPassword",
-      "pages": ["forgot-password"]
-    },
-    {
       "root": "pages/dataCenter",
       "name": "dataCenter",
       "pages": ["index"]
