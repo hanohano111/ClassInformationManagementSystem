@@ -9,7 +9,7 @@
 
     <view class="login__card">
       <view class="login__desc">
-        <text>我们仅会获取必要的基础信息（头像、昵称），用于展示个人资料。</text>
+        <text>我们仅会使用 OpenID 进行身份识别，不从微信侧获取头像、昵称等个人信息。</text>
       </view>
 
       <t-radio-group

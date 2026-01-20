@@ -8,7 +8,7 @@ Page({
     hasVisibleClasses: true, // 是否有可见的班级
     classSidebar: [
       {
-        title: '进入班级',
+        title: '加入班级',
         type: 'enter',
       },
       {

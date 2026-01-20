@@ -35,7 +35,7 @@ exports.main = async (event) => {
       user = { _id: userId, ...newUser };
     } else {
       // 3. 用户已存在，直接返回
-      user = userRes.data[0];
+      [user] = userRes.data;
       userId = user._id;
     }
 
@@ -47,8 +47,6 @@ exports.main = async (event) => {
       data: {
         userId: userId,
         role: user.role || 0,
-        name: user.name || '',
-        avatar: user.avatar || '',
       },
     };
   } catch (e) {
