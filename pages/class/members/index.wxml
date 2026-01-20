@@ -16,10 +16,10 @@
           disabled="{{!(isAdmin && !item.isCreator && !(item.userId && currentUserId && item.userId === currentUserId) && !(item.openid && currentOpenid && item.openid === currentOpenid))}}"
         >
           <view class="member-cell-wrapper">
-            <t-cell
-              title="{{item.name || '未设置名称'}}"
+        <t-cell
+          title="{{item.name || '未设置名称'}}"
               note="{{item.role === 'admin' ? '' : (item.studentNo || '未填写学号')}}"
-            />
+        />
             <view wx:if="{{item.role === 'admin'}}" class="admin-badge">管理员</view>
           </view>
 

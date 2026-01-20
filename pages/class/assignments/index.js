@@ -85,10 +85,10 @@ Page({
         const isOverdue = deadline ? Date.now() > deadline : false;
         
         return {
-          ...assignment,
+        ...assignment,
           id: String(assignment.id || assignment._id || ''),
-          createdAtText: this.formatTime(assignment.createdAt),
-          deadlineText: assignment.deadline ? this.formatDeadlineTime(assignment.deadline) : '',
+        createdAtText: this.formatTime(assignment.createdAt),
+        deadlineText: assignment.deadline ? this.formatDeadlineTime(assignment.deadline) : '',
           translateX: 0, // 初始化滑动距离
           hasSubmitted,
           isOverdue,

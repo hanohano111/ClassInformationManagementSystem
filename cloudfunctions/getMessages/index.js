@@ -56,15 +56,15 @@ exports.main = async (event) => {
       const totalMembers = (membersRes.data || []).length;
 
       // 近一周的签到码
-      const checkInCodeRes = await checkInCodes
-        .where({
-          courseId: courseId,
-          createdAt: db.command.gte(oneWeekAgo),
-        })
-        .orderBy('createdAt', 'desc')
-        .get();
+        const checkInCodeRes = await checkInCodes
+          .where({
+            courseId: courseId,
+            createdAt: db.command.gte(oneWeekAgo),
+          })
+          .orderBy('createdAt', 'desc')
+          .get();
 
-      for (const codeData of checkInCodeRes.data) {
+        for (const codeData of checkInCodeRes.data) {
         if (isAdmin) {
           // 管理员看到签到“情况”：已签到人数/总人数
           const countRes = await checkInRecords
@@ -83,24 +83,24 @@ exports.main = async (event) => {
           });
         } else {
           // 学生只提醒“未签到”
-          const recordRes = await checkInRecords
-            .where({
-              courseId: courseId,
-              checkInCode: codeData.code,
-              openid: openid,
-            })
-            .get();
+        const recordRes = await checkInRecords
+          .where({
+            courseId: courseId,
+            checkInCode: codeData.code,
+            openid: openid,
+          })
+          .get();
           if ((recordRes.data || []).length === 0) {
-            messages.push({
-              type: 'checkin_notice',
-              courseId: courseId,
-              courseName: course.name || '未知班级',
-              title: '签到通知',
-              content: codeData.note || `签到码：${codeData.code}`,
-              timestamp: codeData.createdAt,
-              relatedId: codeData.code,
-              relatedType: 'checkin',
-            });
+          messages.push({
+            type: 'checkin_notice',
+            courseId: courseId,
+            courseName: course.name || '未知班级',
+            title: '签到通知',
+            content: codeData.note || `签到码：${codeData.code}`,
+            timestamp: codeData.createdAt,
+            relatedId: codeData.code,
+            relatedType: 'checkin',
+          });
           }
         }
       }
@@ -153,25 +153,25 @@ exports.main = async (event) => {
           });
         } else {
           // 学生看到自己的提交状态（已交/迟交/未交）
-          const submissionRes = await assignmentSubmissions
-            .where({
-              assignmentId: assignment._id,
-              openid: openid,
-            })
-            .get();
+        const submissionRes = await assignmentSubmissions
+          .where({
+            assignmentId: assignment._id,
+            openid: openid,
+          })
+          .get();
           const hasSubmitted = (submissionRes.data || []).length > 0;
           const isOverdue = assignment.deadline && now > assignment.deadline;
           const statusText = hasSubmitted ? '已交' : (isOverdue ? '迟交' : '未交');
-          messages.push({
-            type: 'assignment_notice',
-            courseId: courseId,
-            courseName: course.name || '未知班级',
-            title: `作业：${assignment.title}`,
+        messages.push({
+          type: 'assignment_notice',
+          courseId: courseId,
+          courseName: course.name || '未知班级',
+          title: `作业：${assignment.title}`,
             content: `状态：${statusText}`,
-            timestamp: assignment.createdAt,
-            relatedId: assignment._id,
-            relatedType: 'assignment',
-          });
+          timestamp: assignment.createdAt,
+          relatedId: assignment._id,
+          relatedType: 'assignment',
+        });
         }
       }
 
