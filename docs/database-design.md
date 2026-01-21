@@ -36,7 +36,7 @@
 
 ## 二、班级管理模块
 
-### 2.1 班级表 (classes)
+### 2.1 班级表 (courses)
 
 | 字段名 | 类型 | 说明 | 加密 |
 |--------|------|------|------|
@@ -57,7 +57,7 @@
 
 ---
 
-### 2.2 班级成员表 (class_members)
+### 2.2 班级成员表 (course_members)
 
 | 字段名 | 类型 | 说明 | 加密 |
 |--------|------|------|------|
@@ -102,27 +102,6 @@
 
 **说明：**
 - 通知内容为明文存储，不涉及直接个人隐私
-
----
-
-### 3.2 通知阅读记录表 (notice_reads)
-
-| 字段名 | 类型 | 说明 | 加密 |
-|--------|------|------|------|
-| id | BIGINT | 主键，自增 | 否 |
-| notice_id | BIGINT | 通知ID | 否 |
-| user_id | BIGINT | 用户ID | 否 |
-| student_no | VARCHAR(32) | 学号（冗余） | **是 [AES]** |
-| read_at | DATETIME | 阅读时间 | 否 |
-
-**索引：**
-- PRIMARY KEY (id)
-- UNIQUE KEY uk_notice_user (notice_id, user_id)
-- INDEX idx_notice_id (notice_id)
-- INDEX idx_student_no (student_no)
-
-**说明：**
-- student_no 加密存储，避免通过阅读行为分析学生身份
 
 ---
 
@@ -174,29 +153,6 @@
 
 ---
 
-### 4.3 作业批改表 (assignment_grades)
-
-| 字段名 | 类型 | 说明 | 加密 |
-|--------|------|------|------|
-| id | BIGINT | 主键，自增 | 否 |
-| submission_id | BIGINT | 提交ID | 否 |
-| student_no | VARCHAR(32) | 学号 | **是 [AES]** |
-| score | DECIMAL(5,2) | 成绩 | **是 [AES]** |
-| comment | TEXT | 教师评语 | **是 [AES]** |
-| grader_id | BIGINT | 批改人ID | 否 |
-| graded_at | DATETIME | 批改时间 | 否 |
-| updated_at | DATETIME | 更新时间 | 否 |
-
-**索引：**
-- PRIMARY KEY (id)
-- UNIQUE KEY uk_submission (submission_id)
-- INDEX idx_student_no (student_no)
-
-**说明：**
-- 成绩和评语加密存储，防止学业评价泄露
-
----
-
 ## 五、请假审批模块
 
 ### 5.1 请假申请表 (leave_requests)
@@ -225,27 +181,9 @@
 
 ---
 
-### 5.2 请假审批记录表 (leave_approvals)
-
-| 字段名 | 类型 | 说明 | 加密 |
-|--------|------|------|------|
-| id | BIGINT | 主键，自增 | 否 |
-| leave_request_id | BIGINT | 请假申请ID | 否 |
-| student_no | VARCHAR(32) | 学号 | **是 [AES]** |
-| comment | TEXT | 审批意见 | **是 [AES]** |
-| approver_id | BIGINT | 审批人ID | 否 |
-| approved_at | DATETIME | 审批时间 | 否 |
-
-**索引：**
-- PRIMARY KEY (id)
-- UNIQUE KEY uk_leave_request (leave_request_id)
-- INDEX idx_student_no (student_no)
-
----
-
 ## 六、考勤签到模块
 
-### 6.1 签到任务表 (attendance_tasks)
+### 6.1 签到任务表 (checkin_codes)
 
 | 字段名 | 类型 | 说明 | 加密 |
 |--------|------|------|------|
@@ -264,7 +202,7 @@
 
 ---
 
-### 6.2 签到记录表 (attendance_records)
+### 6.2 签到记录表 (checkin_records)
 
 | 字段名 | 类型 | 说明 | 加密 |
 |--------|------|------|------|
@@ -286,27 +224,6 @@
 
 ---
 
-## 七、系统配置表
-
-### 7.1 加密配置表 (encryption_config)
-
-| 字段名 | 类型 | 说明 | 加密 |
-|--------|------|------|------|
-| id | BIGINT | 主键，自增 | 否 |
-| config_key | VARCHAR(64) | 配置键 | 否 |
-| config_value | TEXT | 配置值（加密密钥等） | **是 [AES]** |
-| description | VARCHAR(255) | 配置说明 | 否 |
-| updated_at | DATETIME | 更新时间 | 否 |
-
-**索引：**
-- PRIMARY KEY (id)
-- UNIQUE KEY uk_config_key (config_key)
-
-**说明：**
-- 用于存储加密相关配置，密钥本身也需要加密存储
-
----
-
 ## 数据库设计总结
 
 ### 加密字段汇总
@@ -315,13 +232,9 @@
 1. **用户表**：student_no, teacher_no, phone
 2. **班级表**：creator_teacher_no
 3. **班级成员表**：student_no
-4. **通知阅读记录表**：student_no
-5. **作业提交表**：student_no, content, file_metadata
-6. **作业批改表**：student_no, score, comment
-7. **请假申请表**：student_no, reason, image_metadata
-8. **请假审批记录表**：student_no, comment
-9. **签到记录表**：student_no
-10. **加密配置表**：config_value
+4. **作业提交表**：student_no, content, file_metadata
+5. **请假申请表**：student_no, reason, image_metadata
+6. **签到记录表**：student_no
 
 ### 索引设计原则
 

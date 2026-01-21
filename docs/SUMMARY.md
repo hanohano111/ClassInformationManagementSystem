@@ -7,25 +7,21 @@
 ### 1. 📊 数据库表结构设计文档
 **文件：** `docs/database-design.md`
 
-- ✅ 设计了 7 个核心模块的数据库表结构
+- ✅ 设计了 8 个核心数据库集合结构
 - ✅ 标注了所有需要加密的字段（使用 `[AES加密]` 标记）
 - ✅ 包含索引设计和性能优化建议
 - ✅ 提供了加密字段汇总表
 
-**涉及表：**
-- 用户表 (users)
-- 班级表 (classes)
-- 班级成员表 (class_members)
-- 通知表 (notices)
-- 通知阅读记录表 (notice_reads)
-- 作业表 (assignments)
-- 作业提交表 (assignment_submissions)
-- 作业批改表 (assignment_grades)
-- 请假申请表 (leave_requests)
-- 请假审批记录表 (leave_approvals)
-- 签到任务表 (attendance_tasks)
-- 签到记录表 (attendance_records)
-- 加密配置表 (encryption_config)
+**涉及集合：**
+- 用户集合 (users)
+- 班级集合 (courses)
+- 班级成员集合 (course_members)
+- 通知集合 (notices)
+- 作业集合 (assignments)
+- 作业提交集合 (assignment_submissions)
+- 请假申请集合 (leave_requests)
+- 签到码集合 (checkin_codes)
+- 签到记录集合 (checkin_records)
 
 ### 2. 🔌 API 接口清单文档
 **文件：** `docs/api-design.md`
@@ -188,12 +184,14 @@ javascript
 
 ## 📚 文档结构
 
-
+```
 docs/
-├── database-design.md      # 数据库表结构设计
-├── api-design.md           # API接口清单
-├── implementation-guide.md # 实现指南
-└── SUMMARY.md              # 本文档
+├── database-design.md          # 数据库表结构设计
+├── api-design.md               # API接口清单与加密字段说明
+├── implementation-guide.md     # 实现指南
+├── system-requirement-analysis.md # 系统需求分析
+└── SUMMARY.md                  # 本文档（项目实现总结）
+```
 
 README-ENCRYPTION.md        # 快速开始文档
 
