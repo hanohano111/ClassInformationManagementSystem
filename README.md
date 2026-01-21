@@ -86,7 +86,7 @@ flowchart TB
 
 ### 云函数清单（按模块）
 
-- **用户**：`login`、`getUserInfo`、`updateUserInfo`、`register`（预留）
+- **用户**：`login`、`getUserInfo`、`updateUserInfo`
 - **班级/成员**：`createClass`、`getClassList`、`getClassDetail`、`updateClass`、`joinClass`、`exitClass`、`getClassMembers`、`addClassMember`、`removeClassMember`、`setClassAdmin`、`unsetClassAdmin`、`checkAdminStatus`
 - **通知**：`createNotice`、`getNotices`、`getNoticeDetail`、`deleteNotice`
 - **作业**：`createAssignment`、`getAssignments`、`getAssignmentDetail`、`submitAssignment`、`deleteAssignment`
@@ -158,17 +158,7 @@ npm install
 - 权限与数据隔离验证（防越权访问）
 - 性能与兼容性测试（页面加载、云函数响应、弱网环境）
 
-## 🧩 常见问题（FAQ）
 
-- **Q：为什么 README 不写手机号/密码登录？**  
-  A：系统采用微信OpenID进行身份识别，无需手机号密码登录。
-
-
-- **Q：为什么仓库里没有注册/找回密码页面？**  
-  A：本项目统一采用 OpenID 登录并自动创建用户，不提供手机号+密码注册与找回密码流程。
-
-- **Q：哪些字段做了加密？**  
-  A：个人信息等已加密；作业提交内容、请假原因等业务字段暂未加密。
 
 ## 📄 开源许可
 
