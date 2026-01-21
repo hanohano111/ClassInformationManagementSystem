@@ -25,12 +25,12 @@ try {
  * 优先级：1. 从后端获取临时密钥 2. 从配置获取 3. 使用默认测试密钥
  */
 async function getEncryptionKey() {
-  // 如果启用 mock 或 baseUrl 为空，直接使用本地配置的密钥
+  // 直接使用本地配置的密钥（云开发模式）
   try {
     // eslint-disable-next-line
     const localConfigModule = require('../config');
     const localConfig = localConfigModule.default || localConfigModule;
-    if (localConfig?.encryptionKey && (localConfig.isMock || !localConfig.baseUrl)) {
+    if (localConfig?.encryptionKey) {
       return localConfig.encryptionKey;
     }
   } catch (e) {
@@ -226,7 +226,7 @@ async function decryptFields(data, fields) {
 }
 
 // 兼容 ES6 和 CommonJS
-const exports = {
+const cryptoExports = {
   encrypt,
   decrypt,
   encryptFields,
@@ -239,11 +239,11 @@ const exports = {
 
 // CommonJS 导出
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = exports;
+  module.exports = cryptoExports;
 }
 
 // ES6 导出
-export default exports;
+export default cryptoExports;
 export {
   encrypt,
   decrypt,
