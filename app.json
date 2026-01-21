@@ -39,7 +39,6 @@
       ]
     }
   ],
-  "requiredBackgroundModes": ["location"],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
@@ -66,13 +65,5 @@
   "resolveAlias": {
     "~/*": "/*"
   },
-  "permission": {
-    "scope.userLocation": {
-      "desc": "你的位置信息将用于定位签到功能"
-    }
-  },
-  "requiredPrivateInfos": [
-    "getLocation"
-  ],
   "sitemapLocation": "sitemap.json"
 }

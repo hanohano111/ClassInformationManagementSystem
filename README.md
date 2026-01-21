@@ -36,8 +36,6 @@
 - **签到管理**：生成签到码（默认 5 分钟有效期）、查看/删除签到记录
 - **消息中心**：从消息中心进入对应管理操作（以实现为准）
 
-> 说明：系统已预留定位签到云函数 `checkInByLocation`，但当前版本页面未开放定位签到入口。
-
 ## 🧱 架构与目录
 
 ### 系统架构（概览）
@@ -93,7 +91,7 @@ flowchart TB
 - **通知**：`createNotice`、`getNotices`、`getNoticeDetail`、`deleteNotice`
 - **作业**：`createAssignment`、`getAssignments`、`getAssignmentDetail`、`submitAssignment`、`deleteAssignment`
 - **请假**：`createLeaveRequest`、`getLeaveRequests`、`getLeaveRequestDetail`、`approveLeaveRequest`
-- **签到**：`generateCheckInCode`、`getCheckInCode`、`checkInByCode`、`checkInByLocation`（预留）、`getCheckInRecords`、`deleteCheckInCode`、`updateCheckInStatus`
+- **签到**：`generateCheckInCode`、`getCheckInCode`、`checkInByCode`、`getCheckInRecords`、`deleteCheckInCode`、`updateCheckInStatus`
 - **消息中心/文件**：`getMessages`、`getFileTempUrl`
 
 ## 🔐 安全、权限与加密
@@ -165,8 +163,6 @@ npm install
 - **Q：为什么 README 不写手机号/密码登录？**  
   A：系统采用微信OpenID进行身份识别，无需手机号密码登录。
 
-- **Q：是否支持定位签到？**  
-  A：当前版本页面未开放定位签到入口，但保留了 `checkInByLocation` 云函数与定位权限声明。
 
 - **Q：为什么仓库里没有注册/找回密码页面？**  
   A：本项目统一采用 OpenID 登录并自动创建用户，不提供手机号+密码注册与找回密码流程。
